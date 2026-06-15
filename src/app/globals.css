@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #f7f5ef;
+  --foreground: #15120d;
+  --card: #ffffff;
+  --card-foreground: #15120d;
+  --primary: #1f6f43;
+  --primary-foreground: #ffffff;
+  --secondary: #eee8dc;
+  --secondary-foreground: #15120d;
+  --muted: #eee8dc;
+  --muted-foreground: #746c60;
+  --accent: #e7f1e7;
+  --accent-foreground: #1f6f43;
+  --border: #ded6c9;
+  --ring: #1f6f43;
+  --radius: 1rem;
+  --success: #059669;
+  --warning: #d97706;
+  --destructive: #dc2626;
+  --ink: #15120d;
+  --cream: #fffaf0;
+  --sage: #dcebdc;
+  --gold: #c08a2d;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0) 18rem),
+      radial-gradient(circle at 15% 0%, rgba(31, 111, 67, 0.08), transparent 22rem);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    letter-spacing: 0;
+  }
+}
+
+@layer utilities {
+  .gradient-shop {
+    background: linear-gradient(135deg, #1f6f43 0%, #143f2a 100%);
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, #1f6f43, #c08a2d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .shop-container {
+    width: min(100% - 2rem, 1200px);
+    margin-inline: auto;
+  }
+  .shop-shadow {
+    box-shadow: 0 18px 50px rgba(21, 18, 13, 0.08);
+  }
+  .shop-input {
+    width: 100%;
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    background: var(--background);
+    padding: 0.85rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+  }
+  .shop-input:focus {
+    border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
+  }
+  .image-sheen {
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0)),
+      linear-gradient(135deg, #e5ded1, #f8f2e7 48%, #dbe7dc);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted-foreground) 25%, transparent);
+  border-radius: 999px;
+}
