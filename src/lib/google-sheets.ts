@@ -3,7 +3,8 @@
  */
 
 export async function syncToGoogleSheets(action: "create" | "update", data: any) {
-  const webhookUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL || process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+  // SECURITY: never use NEXT_PUBLIC_ prefix for webhook — that exposes the URL in the browser bundle
+  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   
   if (!webhookUrl) {
     return { success: false, error: "Not configured" };

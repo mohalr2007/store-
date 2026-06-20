@@ -6,6 +6,29 @@ import { AddToCartButton } from "./AddToCartButton";
 import { DirectOrderForm } from "./DirectOrderForm";
 import { formatCurrency, getProductImage } from "@/lib/utils";
 import { getPublicProductAction } from "@/app/actions/storefront";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const result = await getPublicProductAction(id);
+  const product = result.product;
+
+  if (!product) {
+    return {
+      title: "Produit Introuvable | COD Store",
+    };
+  }
+
+  return {
+    title: `${product.name} | COD Store Algérie`,
+    description: product.description || `Achetez ${product.name} au meilleur prix avec paiement à la livraison (COD) partout en Algérie.`,
+    openGraph: {
+      title: product.name,
+      description: product.description || "Paiement à la livraison",
+      images: getProductImage(product) ? [{ url: getProductImage(product)! }] : [],
+    },
+  };
+}
 
 export default async function ProductDetailPage({
   params,
@@ -94,7 +117,9 @@ export default async function ProductDetailPage({
               )}
 
               <AddToCartButton product={product} />
-              <DirectOrderForm product={product} />
+              <div id="direct-order">
+                <DirectOrderForm product={product} />
+              </div>
 
               <div className="mt-6 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)]">
                 {[
@@ -107,8 +132,8 @@ export default async function ProductDetailPage({
                     <div key={item.title} className="flex gap-3 p-4">
                       <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--primary)]" />
                       <div>
-                        <p className="text-sm font-black">{item.title}</p>
-                        <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{item.text}</p>
+                         <p className="text-sm font-black">{item.title}</p>
+                         <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{item.text}</p>
                       </div>
                     </div>
                   );
@@ -118,6 +143,17 @@ export default async function ProductDetailPage({
           </section>
         </div>
       </main>
+      
+      {/* Mobile Sticky Buy Button */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)] bg-white/80 p-4 pb-safe backdrop-blur-lg lg:hidden shop-shadow">
+        <a 
+          href="#direct-order" 
+          className="flex h-12 w-full items-center justify-center rounded-full bg-[var(--primary)] text-sm font-black text-white shadow-xl"
+        >
+          Commander Maintenant
+        </a>
+      </div>
+
       <Footer />
     </>
   );

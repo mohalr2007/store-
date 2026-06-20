@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CreditCard, Loader2, ShieldCheck, ShoppingBag, Truck } from "lucide-react";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCart } from "@/components/CartProvider";
@@ -41,18 +43,25 @@ export default function CheckoutPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (items.length === 0) {
-      setError("Panier vide");
+      toast.error("Votre panier est vide");
       return;
     }
     if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim()) {
-      setError("Veuillez remplir les champs obligatoires.");
+      toast.error("Veuillez remplir les champs obligatoires.");
       return;
     }
 
     setLoading(true);
-    setError("");
 
     try {
+      // Validate stock before submitting
+      const outOfStockItems = items.filter(item => item.product.current_quantity < item.quantity);
+      if (outOfStockItems.length > 0) {
+        toast.error(`Stock insuffisant pour: ${outOfStockItems.map(i => i.product.name).join(", ")}`);
+        setLoading(false);
+        return;
+      }
+
       const result = await submitStoreOrderAction({
         fullName: form.fullName,
         phone: form.phone,
@@ -67,8 +76,10 @@ export default function CheckoutPage() {
       }
 
       clearCart();
+      toast.success("Commande confirmée avec succès !");
       router.push(`/order-confirmation?order=${result.orderNumber}`);
     } catch (err: any) {
+      toast.error(err.message || "Une erreur est survenue.");
       setError(err.message || "Une erreur est survenue.");
     } finally {
       setLoading(false);
@@ -98,7 +109,7 @@ export default function CheckoutPage() {
     <>
       <Header />
       <main className="shop-container py-10">
-        <div className="mb-8">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[var(--primary)]">
             Checkout COD
           </p>
@@ -108,10 +119,10 @@ export default function CheckoutPage() {
           <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
             Remplissez vos coordonnees. Nous vous appelons pour confirmer avant l'expedition.
           </p>
-        </div>
+        </motion.div>
 
         <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_390px]">
-          <section className="rounded-[2rem] border border-black/8 bg-white p-5 shop-shadow sm:p-7">
+          <motion.section initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-[2rem] border border-black/8 bg-white p-5 shop-shadow sm:p-7">
             {error && (
               <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
                 {error}
@@ -182,9 +193,9 @@ export default function CheckoutPage() {
                 />
               </Field>
             </div>
-          </section>
+          </motion.section>
 
-          <aside className="h-fit rounded-[2rem] border border-black/8 bg-[var(--cream)] p-5 shop-shadow lg:sticky lg:top-32">
+          <motion.aside initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="h-fit rounded-[2rem] border border-black/8 bg-[var(--cream)] p-5 shop-shadow lg:sticky lg:top-32">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[var(--primary)]">
               Votre commande
             </p>
@@ -238,7 +249,7 @@ export default function CheckoutPage() {
                 Vos informations restent privees.
               </p>
             </div>
-          </aside>
+          </motion.aside>
         </form>
       </main>
       <Footer />

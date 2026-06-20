@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { toast } from "sonner";
 import type { CartItem, Product, ProductVariant } from "@/lib/types";
 
 interface CartContextType {
@@ -30,13 +31,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = (product: Product, quantity = 1, variant?: ProductVariant) => {
+    if (product.current_quantity <= 0) {
+      toast.error("Ce produit est en rupture de stock.");
+      return;
+    }
+
     setItems((prev) => {
       const existing = prev.find((i) => i.product.id === product.id);
+      
       if (existing) {
+        const newQty = existing.quantity + quantity;
+        if (newQty > product.current_quantity) {
+          toast.warning(`Désolé, il ne reste que ${product.current_quantity} unité(s) en stock.`);
+          return prev.map((i) =>
+            i.product.id === product.id ? { ...i, quantity: product.current_quantity } : i
+          );
+        }
+        toast.success("Quantité mise à jour dans le panier !");
         return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: i.quantity + quantity } : i
+          i.product.id === product.id ? { ...i, quantity: newQty } : i
         );
       }
+      
+      toast.success("Produit ajouté au panier !");
       return [...prev, { product, quantity, variant }];
     });
   };
@@ -48,11 +65,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
       removeItem(productId);
+      toast.info("Produit retiré du panier.");
       return;
     }
-    setItems((prev) =>
-      prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i))
-    );
+
+    setItems((prev) => {
+      const existing = prev.find((i) => i.product.id === productId);
+      if (existing && quantity > existing.product.current_quantity) {
+        toast.warning(`Limite de stock atteinte (${existing.product.current_quantity}).`);
+        return prev.map((i) => (i.product.id === productId ? { ...i, quantity: existing.product.current_quantity } : i));
+      }
+      return prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i));
+    });
   };
 
   const clearCart = () => setItems([]);

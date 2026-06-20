@@ -75,6 +75,25 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
 
     const supabase = createAdminClient();
     const activeTenantId = tenantId();
+
+    // Verify stock on the server
+    for (const item of items) {
+      const { data: dbProduct, error: prodError } = await supabase
+        .from("products")
+        .select("current_quantity, name")
+        .eq("id", item.product.id)
+        .eq("tenant_id", activeTenantId)
+        .single();
+      
+      if (prodError || !dbProduct) {
+        return { success: false, error: `Produit introuvable: ${item.product.name}` };
+      }
+      
+      if (dbProduct.current_quantity < item.quantity) {
+        return { success: false, error: `Stock insuffisant pour ${dbProduct.name} (Reste: ${dbProduct.current_quantity})` };
+      }
+    }
+
     const total = items.reduce(
       (sum, item) => sum + Number(item.product.selling_price || 0) * Number(item.quantity || 1),
       0
@@ -122,11 +141,29 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
       product_id: item.product.id,
       quantity: Math.max(1, Number(item.quantity || 1)),
       unit_price: Number(item.product.selling_price || 0),
-      discount_amount: 0,
     }));
 
     const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
     if (itemsError) throw itemsError;
+
+    for (const item of items) {
+      // Re-fetch since we need the exact quantity just in case it changed in the last millisecond
+      const { data: dbProduct } = await supabase
+        .from("products")
+        .select("current_quantity")
+        .eq("id", item.product.id)
+        .eq("tenant_id", activeTenantId)
+        .single();
+
+      const currentDbQty = dbProduct?.current_quantity || 0;
+      const newQty = Math.max(0, currentDbQty - Number(item.quantity || 1));
+      
+      await supabase
+        .from("products")
+        .update({ current_quantity: newQty })
+        .eq("id", item.product.id)
+        .eq("tenant_id", activeTenantId); // Always scope to tenant
+    }
 
     await supabase.from("order_financials").insert({
       order_id: order!.id,
@@ -136,13 +173,15 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
       discount_amount: 0,
       charged_shipping_amount: 0,
       real_shipping_cost: 0,
-      cogs_amount: 0,
+      cogs_amount: items.reduce(
+        (sum, item) => sum + Number((item.product as any).last_purchase_cost || 0) * Number(item.quantity || 1),
+        0
+      ),
       return_shipping_loss: 0,
       packaging_cost: 0,
       ad_spend_attributed: 0,
     });
 
-    // Send to Google Sheets webhook if configured
     try {
       const { syncToGoogleSheets } = await import("@/lib/google-sheets");
       await syncToGoogleSheets("create", {
