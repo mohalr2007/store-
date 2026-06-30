@@ -11,6 +11,7 @@ export function Interactive360Video({ src, poster, className }: { src: string; p
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startVideoTime, setStartVideoTime] = useState(0);
+  const lastUpdateTimeRef = useRef<number>(0);
   const [duration, setDuration] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -94,6 +95,12 @@ export function Interactive360Video({ src, poster, className }: { src: string; p
     } else if (newTime > duration) {
       newTime = newTime % duration;
     }
+
+    const now = performance.now();
+    // Throttle updates to ~24fps (approx 40ms) to prevent video decoding lag on heavy MP4s
+    if (now - lastUpdateTimeRef.current < 40) return;
+    
+    lastUpdateTimeRef.current = now;
 
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
