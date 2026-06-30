@@ -125,7 +125,7 @@ export function DirectOrderForm({
       className="mt-5 w-full rounded-[1.75rem] border border-[rgba(69,212,232,0.18)] bg-[var(--bg-card)] p-6 shadow-sm sm:p-7 lg:p-8"
       style={{
         boxShadow: "var(--shadow)",
-        background: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,251,252,0.96))",
+        background: "var(--order-form-bg)",
       }}
     >
       <div className="min-w-0">
@@ -243,7 +243,7 @@ export function DirectOrderForm({
         </div>
       </div>
 
-      <div className="mt-5 rounded-[1.35rem] border border-[rgba(69,212,232,0.16)] bg-[rgba(255,255,255,0.72)] p-4 sm:p-5">
+      <div className="mt-5 rounded-[1.35rem] border border-[rgba(69,212,232,0.16)] bg-[var(--soft-panel-bg)] p-4 sm:p-5">
         <div className="space-y-2.5 text-sm">
           <Row label={`سعر المنتج (${form.quantity})`} value={`${subtotal} د.ج`} />
           <Row
@@ -262,7 +262,14 @@ export function DirectOrderForm({
       </div>
 
       {error && (
-        <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-right text-sm font-semibold text-red-700">
+        <p
+          className="mt-3 rounded-xl border px-4 py-3 text-right text-sm font-semibold"
+          style={{
+            background: "var(--danger-bg)",
+            borderColor: "var(--danger-border)",
+            color: "var(--danger-fg)",
+          }}
+        >
           {error}
         </p>
       )}

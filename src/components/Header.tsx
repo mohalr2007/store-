@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingBag, Menu, X, Zap } from "lucide-react";
+import { ShoppingBag, Menu, Moon, Sun, X, Zap } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
+import { useTheme } from "@/components/ThemeProvider";
 
 export function Header() {
   const { itemCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -79,6 +81,22 @@ export function Header() {
 
           {/* Left actions (since RTL, start is right, end is left) */}
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="flex h-9 w-9 items-center justify-center rounded-xl transition-all hover:scale-105"
+              style={{
+                background: theme === "dark" ? "rgba(69,212,232,0.14)" : "rgba(69,212,232,0.08)",
+                border: "1px solid var(--border-strong)",
+                color: "var(--fg)",
+                boxShadow: theme === "dark" ? "0 0 14px rgba(69,212,232,0.16)" : "none",
+              }}
+              aria-label={theme === "dark" ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"}
+              title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
             {/* Cart */}
             <Link
               href="/cart"

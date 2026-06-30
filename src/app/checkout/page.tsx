@@ -158,7 +158,14 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_390px]">
             <motion.section initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card-glow rounded-[2rem] p-5 sm:p-7">
               {error && (
-                <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                <div
+                  className="mb-5 rounded-2xl border px-4 py-3 text-sm font-semibold"
+                  style={{
+                    background: "var(--danger-bg)",
+                    borderColor: "var(--danger-border)",
+                    color: "var(--danger-fg)",
+                  }}
+                >
                   {error}
                 </div>
               )}

@@ -21,10 +21,12 @@
   --bg-card:     #ffffff;
   --bg-card-2:   #f0fbfc;
   --bg-input:    #fafefe;
+  --background:  var(--bg);
 
   --fg:          #10292f;
   --fg-muted:    #55727a;
   --fg-subtle:   #7b9aa2;
+  --muted-foreground: var(--fg-muted);
 
   --primary:     #45d4e8;
   --primary-fg:  #0d2a30;
@@ -40,11 +42,58 @@
 
   --shadow:      0 4px 18px rgba(16,41,47,0.06), 0 0 14px rgba(69,212,232,0.06);
   --shadow-glow: 0 0 20px rgba(69,212,232,0.16), 0 0 42px rgba(69,212,232,0.08);
+  --order-form-bg: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,251,252,0.96));
+  --soft-panel-bg: rgba(255,255,255,0.72);
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --danger-fg: #b91c1c;
 
   --radius-sm:  0.75rem;
   --radius-md:  1rem;
   --radius-lg:  1.5rem;
   --radius-xl:  2rem;
+}
+
+html.dark {
+  --brand:         #45d4e8;
+  --brand-dark:    #1eb7d1;
+  --brand-light:   #8eeaf5;
+  --brand-glow:    rgba(69, 212, 232, 0.34);
+  --brand-glow-soft: rgba(69, 212, 232, 0.16);
+  --brand-glow-edge: rgba(69, 212, 232, 0.28);
+  --brand-soft:    rgba(69, 212, 232, 0.13);
+  --brand-border:  rgba(69, 212, 232, 0.34);
+
+  --bg:          #071417;
+  --bg-card:     #0d2025;
+  --bg-card-2:   #102a30;
+  --bg-input:    #0a1c20;
+  --background:  var(--bg);
+
+  --fg:          #ecfeff;
+  --fg-muted:    #b5d4da;
+  --fg-subtle:   #80aeb8;
+  --muted-foreground: var(--fg-muted);
+
+  --primary:     #45d4e8;
+  --primary-fg:  #061316;
+  --primary-hover: #72e5f3;
+
+  --neon-blue:   #45d4e8;
+  --neon-gold:   #fbbf24;
+  --neon-green:  #34d399;
+  --neon-red:    #fb7185;
+
+  --border:        rgba(69, 212, 232, 0.18);
+  --border-strong: rgba(69, 212, 232, 0.38);
+
+  --shadow:      0 12px 32px rgba(0,0,0,0.3), 0 0 18px rgba(69,212,232,0.08);
+  --shadow-glow: 0 0 24px rgba(69,212,232,0.2), 0 0 54px rgba(69,212,232,0.1);
+  --order-form-bg: linear-gradient(180deg, rgba(13,32,37,0.98), rgba(9,24,28,0.96));
+  --soft-panel-bg: rgba(16,42,48,0.82);
+  --danger-bg: rgba(127,29,29,0.28);
+  --danger-border: rgba(248,113,113,0.34);
+  --danger-fg: #fecaca;
 }
 
 /* === BASE === */
@@ -314,6 +363,21 @@
     letter-spacing: 0.08em;
     white-space: nowrap;
   }
+}
+
+html.dark .neon-grid-bg {
+  background-image:
+    linear-gradient(rgba(69,212,232,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(69,212,232,0.045) 1px, transparent 1px);
+}
+
+html.dark .btn-outline {
+  color: var(--fg);
+  background: rgba(69,212,232,0.1);
+}
+
+html.dark .btn-primary {
+  color: #061316;
 }
 
 /* === SCROLLBAR === */

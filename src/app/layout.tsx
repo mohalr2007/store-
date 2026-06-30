@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
 import { Toaster } from "sonner";
 import { KeyboardNavigation } from "@/components/keyboard-navigation";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
@@ -20,9 +21,19 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('ac-theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}",
+          }}
+        />
+      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <KeyboardNavigation />
-        <CartProvider>{children}</CartProvider>
+        <ThemeProvider>
+          <CartProvider>{children}</CartProvider>
+        </ThemeProvider>
         <Toaster position="bottom-center" richColors />
       </body>
     </html>
