@@ -33,6 +33,7 @@ export async function listPublicProductsAction(limit?: number) {
       .select(baseSelect)
       .eq("tenant_id", tenantId())
       .eq("is_active", true)
+      .is("deleted_at", null)
       .order("created_at", { ascending: false });
 
     if (limit) query = query.limit(limit);
@@ -54,6 +55,7 @@ export async function getPublicProductAction(id: string) {
       .select("*, product_variants(*)")
       .eq("tenant_id", tenantId())
       .eq("is_active", true)
+      .is("deleted_at", null)
       .eq("id", id)
       .single();
 
