@@ -29,8 +29,8 @@ export default async function HomePage() {
             style={{ background: "radial-gradient(circle, rgba(69,212,232,0.75), transparent 70%)" }}
           />
 
-          <div className="shop-container relative z-10 flex flex-col items-center gap-10 lg:flex-row lg:justify-between lg:gap-0">
-            <div className="flex w-full justify-center lg:order-last lg:w-[48%] lg:justify-end">
+          <div className="shop-container relative z-10 flex flex-col items-center gap-10 lg:flex-row-reverse lg:justify-between lg:gap-0">
+            <div className="flex w-full justify-center lg:w-[48%] lg:justify-start">
               <div
                 className="relative flex h-[240px] w-[240px] items-center justify-center sm:h-[320px] sm:w-[320px] lg:h-[460px] lg:w-[460px]"
                 style={{
@@ -41,7 +41,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="w-full max-w-2xl text-center lg:text-left">
+            <div className="w-full max-w-2xl text-right">
               <div
                 className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] sm:mb-6 sm:py-2 sm:text-[11px]"
                 style={{
@@ -64,7 +64,7 @@ export default async function HomePage() {
                 تشكيلات أنيقة وفاخرة مع الدفع عند الاستلام، وخدمة توصيل تغطي كامل الولايات.
               </p>
 
-              <div className="mt-7 flex flex-col gap-3 sm:mt-8 xs:flex-row justify-center lg:justify-start">
+              <div className="mt-7 flex flex-col gap-3 sm:mt-8 xs:flex-row justify-end">
                 <Link href="/products" className="btn-primary w-full xs:w-auto">
                   تصفح الكتالوج
                   <ArrowLeft className="h-4 w-4 rotate-180" />
@@ -74,7 +74,7 @@ export default async function HomePage() {
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-2 lg:justify-start">
+              <div className="mt-8 flex flex-wrap justify-end gap-2">
                 {["توصيل 24-72 ساعة", "الدفع عند الاستلام", "تغطية كاملة للجزائر"].map((t) => (
                   <span
                     key={t}
