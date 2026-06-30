@@ -160,7 +160,7 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
         customer_id: createdCustomer!.id,
         status: "pending",
         shipping_cost: shippingCost,
-        total_amount: subtotal + shippingCost,
+        total_amount: total + shippingCost,
         province: customer.province,
         city: customer.city?.trim() || null,
         address: customer.address.trim(),
