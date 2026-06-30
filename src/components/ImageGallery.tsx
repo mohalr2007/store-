@@ -7,7 +7,7 @@ import { getProductImage, cn } from "@/lib/utils";
 import type { Product } from "@/lib/types";
 
 import { useEffect } from "react";
-export function ImageGallery({ product, activeImageUrl }: { product: Product; activeImageUrl?: string | null }) {
+export function ImageGallery({ product, activeImageUrl, colorSelected }: { product: Product; activeImageUrl?: string | null; colorSelected?: boolean }) {
   const images = product.images?.length
     ? product.images
     : getProductImage(product)
@@ -20,12 +20,17 @@ export function ImageGallery({ product, activeImageUrl }: { product: Product; ac
 
   useEffect(() => {
     if (activeImageUrl) {
+      // A variant color with a linked image was selected → jump to that image
       const idx = images.findIndex((img) => img === activeImageUrl);
       if (idx !== -1) {
         setActiveIndex(idx);
       }
+    } else if (colorSelected === false) {
+      // Color was explicitly DESELECTED → reset to default (360° or main image)
+      setActiveIndex(hasVideo ? "video" : 0);
     }
-  }, [activeImageUrl, images]);
+    // if colorSelected=true but activeImageUrl=null: color selected but no linked image, keep current view
+  }, [activeImageUrl, colorSelected]);
 
   return (
     <div className="space-y-3">

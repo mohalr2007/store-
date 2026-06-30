@@ -52,7 +52,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
     <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 items-start">
       {/* ── LEFT: Gallery ── */}
       <section className="min-w-0">
-        <ImageGallery product={product} activeImageUrl={activeImageUrl} />
+        <ImageGallery product={product} activeImageUrl={activeImageUrl} colorSelected={!!selectedColor} />
 
         {/* Trust cards */}
         <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
