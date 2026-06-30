@@ -13,6 +13,7 @@ type CustomerPayload = {
   city?: string;
   address: string;
   notes?: string;
+  delivery_mode?: string;
 };
 
 type OrderItemPayload = {
@@ -76,7 +77,28 @@ export async function getPublicProductAction(id: string) {
   }
 }
 
-export async function submitStoreOrderAction(customer: CustomerPayload, items: OrderItemPayload[]) {
+export async function getStoreShippingRatesAction() {
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("store_shipping_rates")
+      .select("province, home_price, desk_price, is_active")
+      .eq("tenant_id", tenantId())
+      .eq("is_active", true)
+      .order("province");
+
+    if (error) {
+      console.error("Supabase Error getting shipping rates:", error);
+      return { success: false, rates: [], error: error.message };
+    }
+
+    return { success: true, rates: data || [] };
+  } catch (error: any) {
+    return { success: false, rates: [], error: error.message || "Impossible de charger les tarifs." };
+  }
+}
+
+export async function submitStoreOrderAction(customer: CustomerPayload, items: OrderItemPayload[], shippingCost: number = 0) {
   try {
     if (!customer.fullName.trim() || !customer.phone.trim() || !customer.address.trim()) {
       return { success: false, error: "Nom, telephone et adresse sont obligatoires." };
@@ -137,10 +159,14 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
         order_number: orderNumber,
         customer_id: createdCustomer!.id,
         status: "pending",
+        shipping_cost: shippingCost,
+        total_amount: subtotal + shippingCost,
         province: customer.province,
         city: customer.city?.trim() || null,
         address: customer.address.trim(),
-        customer_note: customer.notes?.trim() || null,
+        notes: customer.notes?.trim() || null,
+        delivery_mode: customer.delivery_mode || "home",
+        created_by: null,
       })
       .select("id")
       .single();

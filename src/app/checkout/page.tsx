@@ -10,7 +10,14 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCart } from "@/components/CartProvider";
 import { formatCurrency, getProductImage } from "@/lib/utils";
-import { submitStoreOrderAction } from "@/app/actions/storefront";
+import { submitStoreOrderAction, getStoreShippingRatesAction } from "@/app/actions/storefront";
+
+interface ShippingRate {
+  province: string;
+  home_price: number;
+  desk_price: number;
+  is_active: boolean;
+}
 
 const WILAYAS = [
   "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Bejaia", "Biskra",
@@ -24,7 +31,8 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, total, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [rates, setRates] = useState<ShippingRate[]>([]);
+  const [ratesLoading, setRatesLoading] = useState(true);
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -32,7 +40,31 @@ export default function CheckoutPage() {
     city: "",
     address: "",
     notes: "",
+    delivery_mode: "home",
   });
+
+  import { useEffect } from "react";
+  useEffect(() => {
+    const fetchRates = async () => {
+      const res = await getStoreShippingRatesAction();
+      if (res.success && res.rates) {
+        setRates(res.rates);
+        // Preselect the first active wilaya if any
+        if (res.rates.length > 0 && !res.rates.find(r => r.province === form.province)) {
+          setForm(prev => ({ ...prev, province: res.rates[0].province }));
+        }
+      }
+      setRatesLoading(false);
+    };
+    fetchRates();
+  }, []);
+
+  const currentRate = rates.find(r => r.province === form.province);
+  const shippingCost = currentRate 
+    ? (form.delivery_mode === "home" ? currentRate.home_price : currentRate.desk_price)
+    : 0;
+  
+  const finalTotal = total + shippingCost;
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -69,7 +101,8 @@ export default function CheckoutPage() {
         city: form.city,
         address: form.address,
         notes: form.notes,
-      }, items.map((item) => ({ product: item.product, quantity: item.quantity })));
+        delivery_mode: form.delivery_mode,
+      }, items.map((item) => ({ product: item.product, quantity: item.quantity })), shippingCost);
 
       if (!result.success) {
         throw new Error(result.error);
@@ -152,12 +185,22 @@ export default function CheckoutPage() {
                 />
               </Field>
               <Field label="Wilaya *">
-                <select name="province" value={form.province} onChange={handleChange} className="shop-input">
-                  {WILAYAS.map((wilaya) => (
-                    <option key={wilaya} value={wilaya}>
-                      {wilaya}
-                    </option>
-                  ))}
+                <select name="province" value={form.province} onChange={handleChange} className="shop-input" disabled={ratesLoading}>
+                  {ratesLoading ? (
+                    <option>Chargement...</option>
+                  ) : rates.length > 0 ? (
+                    rates.map((rate) => (
+                      <option key={rate.province} value={rate.province}>
+                        {rate.province}
+                      </option>
+                    ))
+                  ) : (
+                    WILAYAS.map((wilaya) => (
+                      <option key={wilaya} value={wilaya}>
+                        {wilaya}
+                      </option>
+                    ))
+                  )}
                 </select>
               </Field>
               <Field label="Ville / commune">
@@ -171,8 +214,45 @@ export default function CheckoutPage() {
               </Field>
             </div>
 
-            <div className="mt-4 space-y-4">
-              <Field label="Adresse complete *">
+            <div className="mt-6 border-t border-[var(--border)] pt-5">
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
+                Mode de livraison *
+              </span>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${form.delivery_mode === "home" ? "border-[var(--primary)] bg-[var(--primary)]/5" : "border-[var(--border)] hover:bg-[var(--accent)]"}`}>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="delivery_mode"
+                      value="home"
+                      checked={form.delivery_mode === "home"}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-[var(--primary)]"
+                    />
+                    <span className="text-sm font-bold">À domicile</span>
+                  </div>
+                  {currentRate && <span className="text-sm font-black text-[var(--primary)]">{currentRate.home_price > 0 ? `+${currentRate.home_price} DA` : "Gratuit"}</span>}
+                </label>
+                
+                <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${form.delivery_mode === "desk" ? "border-[var(--primary)] bg-[var(--primary)]/5" : "border-[var(--border)] hover:bg-[var(--accent)]"}`}>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="delivery_mode"
+                      value="desk"
+                      checked={form.delivery_mode === "desk"}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-[var(--primary)]"
+                    />
+                    <span className="text-sm font-bold">Point Relais / Bureau</span>
+                  </div>
+                  {currentRate && <span className="text-sm font-black text-[var(--primary)]">{currentRate.desk_price > 0 ? `+${currentRate.desk_price} DA` : "Gratuit"}</span>}
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <Field label="Adresse complète *">
                 <textarea
                   name="address"
                   value={form.address}
@@ -211,12 +291,12 @@ export default function CheckoutPage() {
                 <span className="font-black">{formatCurrency(total)}</span>
               </div>
               <div className="mt-3 flex justify-between text-sm">
-                <span className="text-[var(--muted-foreground)]">Paiement</span>
-                <span className="font-black">A la livraison</span>
+                <span className="text-[var(--muted-foreground)]">Livraison ({form.delivery_mode === "home" ? "Domicile" : "Bureau"})</span>
+                <span className="font-black">{shippingCost > 0 ? formatCurrency(shippingCost) : "Gratuite"}</span>
               </div>
               <div className="mt-5 flex items-end justify-between">
-                <span className="text-sm font-bold text-[var(--muted-foreground)]">Total</span>
-                <span className="text-2xl font-black text-[var(--primary)]">{formatCurrency(total)}</span>
+                <span className="text-sm font-bold text-[var(--muted-foreground)]">Total à payer</span>
+                <span className="text-2xl font-black text-[var(--primary)]">{formatCurrency(finalTotal)}</span>
               </div>
             </div>
 
