@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CreditCard, Loader2, ShieldCheck, ShoppingBag, Truck } from "lucide-react";
@@ -43,7 +43,6 @@ export default function CheckoutPage() {
     delivery_mode: "home",
   });
 
-  import { useEffect } from "react";
   useEffect(() => {
     const fetchRates = async () => {
       const res = await getStoreShippingRatesAction();
