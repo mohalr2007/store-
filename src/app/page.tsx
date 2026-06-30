@@ -33,11 +33,31 @@ export default async function HomePage() {
             <div className="flex w-full justify-center lg:w-[48%] lg:justify-start">
               <div
                 className="relative flex h-[240px] w-[240px] items-center justify-center sm:h-[320px] sm:w-[320px] lg:h-[460px] lg:w-[460px]"
-                style={{
-                  filter: "drop-shadow(0 0 40px rgba(69,212,232,0.14)) drop-shadow(0 0 80px rgba(69,212,232,0.08))",
-                }}
               >
-                <img src="/logo.jpg" alt="AL CARTEL SHOP DZ" className="h-full w-full object-contain" />
+                {/* Outer glow ring */}
+                <div
+                  className="absolute inset-0 rounded-[2.5rem] animate-glow-pulse"
+                  style={{
+                    border: "2px solid rgba(69,212,232,0.35)",
+                    boxShadow: "0 0 60px rgba(69,212,232,0.2), 0 0 120px rgba(69,212,232,0.08)",
+                    borderRadius: "30%",
+                  }}
+                />
+                {/* White card frame for logo visibility */}
+                <div
+                  className="relative flex items-center justify-center overflow-hidden"
+                  style={{
+                    width: "88%",
+                    height: "88%",
+                    borderRadius: "24%",
+                    background: "#ffffff",
+                    border: "3px solid rgba(69,212,232,0.5)",
+                    boxShadow: "0 0 40px rgba(69,212,232,0.25), 0 8px 32px rgba(0,0,0,0.12)",
+                    padding: "6%",
+                  }}
+                >
+                  <img src="/logo.jpg" alt="AL CARTEL SHOP DZ" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                </div>
               </div>
             </div>
 
