@@ -1,0 +1,243 @@
+"use client";
+
+import { useState } from "react";
+import { BadgeCheck, Clock3, ShieldCheck, Truck } from "lucide-react";
+import { ImageGallery } from "@/components/ImageGallery";
+import { AddToCartButton } from "./AddToCartButton";
+import { DirectOrderForm } from "./DirectOrderForm";
+import { formatCurrency } from "@/lib/utils";
+import type { Product, ProductVariant } from "@/lib/types";
+
+export function ProductPageLayout({ product }: { product: Product }) {
+  // Extract grouped variants
+  const colorVariants = product.variants?.filter((v) => v.attribute === "color") || [];
+  const sizeVariants = product.variants?.filter((v) => v.attribute === "size") || [];
+
+  const [selectedColor, setSelectedColor] = useState<ProductVariant | null>(
+    colorVariants.length > 0 ? colorVariants[0] : null
+  );
+  const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(
+    sizeVariants.length > 0 ? sizeVariants[0] : null
+  );
+
+  // Determine active image from selected color
+  const activeImageUrl = selectedColor?.custom_name?.startsWith("http")
+    ? selectedColor.custom_name
+    : null;
+
+  // Combine selection for the cart/order
+  const currentVariantLabel = [
+    selectedColor ? `Couleur: ${selectedColor.value}` : null,
+    selectedSize ? `Taille: ${selectedSize.value}` : null,
+  ].filter(Boolean).join(" / ");
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 items-start">
+      {/* ── LEFT: Gallery ── */}
+      <section className="min-w-0">
+        <ImageGallery product={product} activeImageUrl={activeImageUrl} />
+
+        {/* Trust cards */}
+        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+          {[
+            { icon: Truck, text: "توصيل 24-72 ساعة", color: "var(--neon-purple)" },
+            { icon: ShieldCheck, text: "الدفع عند الاستلام", color: "var(--neon-blue)" },
+            { icon: BadgeCheck, text: "تأكيد الطلب", color: "var(--neon-gold)" },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.text}
+                className="card rounded-xl p-3 text-xs font-semibold sm:rounded-2xl sm:p-4"
+              >
+                <Icon className="mb-2 h-4 w-4 sm:h-5 sm:w-5" style={{ color: item.color }} />
+                <span style={{ color: "var(--fg)" }}>{item.text}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── RIGHT: Info ── */}
+      <section className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+        <div className="card-glow rounded-2xl p-5 sm:rounded-3xl sm:p-7 lg:p-9">
+          {/* Category */}
+          {product.category && (
+            <span
+              className="badge"
+              style={{
+                background: "rgba(124,58,237,0.12)",
+                border: "1px solid var(--border-strong)",
+                color: "var(--neon-purple)",
+                padding: "0.35rem 0.85rem",
+                fontSize: "0.65rem",
+              }}
+            >
+              {product.category}
+            </span>
+          )}
+
+          {/* Name */}
+          <h1
+            className="mt-4 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl"
+            style={{ color: "var(--fg)" }}
+          >
+            {product.name}
+          </h1>
+
+          {/* SKU */}
+          {product.sku && (
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em]" style={{ color: "var(--fg-subtle)" }}>
+              رمز المنتج: {product.sku}
+            </p>
+          )}
+
+          <div className="divider-neon my-5" />
+
+          {/* Price + stock */}
+          <div className="flex flex-wrap items-center gap-4">
+            <p className="text-4xl font-black gradient-text-gold sm:text-5xl">
+              {formatCurrency(product.selling_price)}
+            </p>
+            {product.current_quantity > 0 ? (
+              <span
+                className="badge"
+                style={{
+                  background: "rgba(16,185,129,0.1)",
+                  border: "1px solid rgba(16,185,129,0.3)",
+                  color: "var(--neon-green)",
+                  padding: "0.4rem 0.9rem",
+                  fontSize: "0.7rem",
+                }}
+              >
+                ✓ متوفر في المخزون
+              </span>
+            ) : (
+              <span
+                className="badge"
+                style={{
+                  background: "rgba(244,63,94,0.1)",
+                  border: "1px solid rgba(244,63,94,0.3)",
+                  color: "var(--neon-red)",
+                  padding: "0.4rem 0.9rem",
+                  fontSize: "0.7rem",
+                }}
+              >
+                نفذ من المخزون
+              </span>
+            )}
+          </div>
+
+          {/* Variants Selectors */}
+          {(colorVariants.length > 0 || sizeVariants.length > 0) && (
+            <div className="mt-6 space-y-4">
+              {/* Colors */}
+              {colorVariants.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase text-[var(--fg-muted)]">اللون</p>
+                  <div className="flex flex-wrap gap-2">
+                    {colorVariants.map((variant) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedColor(variant)}
+                        className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
+                        style={{
+                          borderColor: selectedColor?.id === variant.id ? "var(--neon-purple)" : "var(--border)",
+                          background: selectedColor?.id === variant.id ? "rgba(124,58,237,0.1)" : "transparent",
+                          color: selectedColor?.id === variant.id ? "var(--neon-purple)" : "var(--fg)",
+                        }}
+                      >
+                        {variant.value}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Sizes */}
+              {sizeVariants.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase text-[var(--fg-muted)]">المقاس</p>
+                  <div className="flex flex-wrap gap-2">
+                    {sizeVariants.map((variant) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedSize(variant)}
+                        className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
+                        style={{
+                          borderColor: selectedSize?.id === variant.id ? "var(--neon-blue)" : "var(--border)",
+                          background: selectedSize?.id === variant.id ? "rgba(0,212,255,0.1)" : "transparent",
+                          color: selectedSize?.id === variant.id ? "var(--neon-blue)" : "var(--fg)",
+                        }}
+                      >
+                        {variant.value}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Description */}
+          {product.description && (
+            <p className="mt-5 text-sm leading-7" style={{ color: "var(--fg-muted)" }}>
+              {product.description}
+            </p>
+          )}
+
+          {/* CTA buttons */}
+          <div className="mt-7">
+            <AddToCartButton product={product} selectedVariant={currentVariantLabel} />
+          </div>
+
+          <div id="direct-order" className="mt-4">
+            <DirectOrderForm product={product} selectedVariant={currentVariantLabel} />
+          </div>
+
+          {/* Info list */}
+          <div
+            className="mt-7 divide-y rounded-2xl"
+            style={{
+              background: "rgba(124,58,237,0.04)",
+              border: "1px solid var(--border)",
+              borderColor: "var(--border)",
+            }}
+          >
+            {[
+              {
+                icon: Clock3,
+                title: "تأكيد الطلب",
+                text: "يقوم الوكيل بتأكيد طلبك قبل الشحن.",
+                color: "var(--neon-purple)",
+              },
+              {
+                icon: Truck,
+                title: "التوصيل",
+                text: "الرسوم حسب الولاية. الدفع فقط عند الاستلام.",
+                color: "var(--neon-blue)",
+              },
+              {
+                icon: ShieldCheck,
+                title: "ثقة",
+                text: "بياناتك تستخدم فقط لمعالجة الطلب.",
+                color: "var(--neon-gold)",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="flex gap-3 p-4" style={{ borderColor: "var(--border)" }}>
+                  <Icon className="mt-0.5 h-5 w-5 shrink-0" style={{ color: item.color }} />
+                  <div>
+                    <p className="text-sm font-black" style={{ color: "var(--fg)" }}>{item.title}</p>
+                    <p className="mt-0.5 text-xs leading-5" style={{ color: "var(--fg-muted)" }}>{item.text}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

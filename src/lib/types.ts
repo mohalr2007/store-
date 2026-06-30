@@ -7,12 +7,15 @@ export interface Product {
   image_url?: string | null;
   image_path?: string | null;
   category: string | null;
+  video_url?: string | null;
+  images?: string[] | null;
   current_quantity: number;
   low_stock_threshold: number;
   selling_price: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  variants?: ProductVariant[];
 }
 
 export interface ProductVariant {

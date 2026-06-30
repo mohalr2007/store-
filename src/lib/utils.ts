@@ -7,15 +7,15 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number): string {
-  const formatted = amount.toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
+  const formatted = amount.toLocaleString("fr-DZ", {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
-  return `${formatted} DA`;
+  return `${formatted} د.ج`;
 }
 
 export function formatDate(date: string | Date): string {
-  return new Intl.DateTimeFormat("fr-FR", {
+  return new Intl.DateTimeFormat("ar-DZ", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -23,6 +23,9 @@ export function formatDate(date: string | Date): string {
 }
 
 export function getProductImage(product: Product): string | null {
+  if (product.images && product.images.length > 0) {
+    return product.images[0];
+  }
   if (product.image_url || product.image_path) {
     return product.image_url || product.image_path || null;
   }

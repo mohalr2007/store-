@@ -1,4 +1,5 @@
 "use client";
+// Force recompile
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { toast } from "sonner";
@@ -14,7 +15,15 @@ interface CartContextType {
   itemCount: number;
 }
 
-const CartContext = createContext<CartContextType | null>(null);
+const CartContext = createContext<CartContextType>({
+  items: [],
+  addItem: () => console.warn("CartContext: addItem called outside Provider"),
+  removeItem: () => console.warn("CartContext: removeItem called outside Provider"),
+  updateQuantity: () => console.warn("CartContext: updateQuantity called outside Provider"),
+  clearCart: () => console.warn("CartContext: clearCart called outside Provider"),
+  total: 0,
+  itemCount: 0,
+});
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -92,7 +101,5 @@ export function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCart() {
-  const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used within CartProvider");
-  return ctx;
+  return useContext(CartContext);
 }

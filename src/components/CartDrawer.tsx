@@ -25,7 +25,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       )}>
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
-          <h2 className="text-base font-semibold">Panier ({itemCount})</h2>
+          <h2 className="text-base font-semibold">سلة المشتريات ({itemCount})</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--accent)]">
             <X className="h-4 w-4" />
           </button>
@@ -36,9 +36,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <ShoppingBag className="h-12 w-12 text-[var(--muted-foreground)]/20 mb-3" />
-              <p className="text-sm text-[var(--muted-foreground)]">Votre panier est vide</p>
+              <p className="text-sm text-[var(--muted-foreground)]">سلة المشتريات فارغة</p>
               <Link href="/products" onClick={onClose} className="mt-4 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
-                Parcourir les produits
+                تصفح المنتجات
               </Link>
             </div>
           ) : (
@@ -46,7 +46,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               {items.map((item) => (
                 <div key={item.product.id} className="flex gap-4 rounded-xl border border-[var(--border)] p-3">
                   <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-[var(--muted)]">
-                    {getProductImage(item.product) ? (
+                    {item.variant?.custom_name && item.variant.custom_name.startsWith('http') ? (
+                      <img src={item.variant.custom_name} alt={item.product.name} className="h-full w-full object-cover" />
+                    ) : getProductImage(item.product) ? (
                       <img src={getProductImage(item.product)!} alt={item.product.name} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full items-center justify-center text-2xl">📦</div>
@@ -55,9 +57,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div className="flex flex-1 flex-col justify-between min-w-0">
                     <div>
                       <h3 className="text-sm font-semibold truncate">{item.product.name}</h3>
+                      {item.variant?.value && (
+                        <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{item.variant.value}</p>
+                      )}
                       <p className="text-xs text-[var(--muted-foreground)]">{formatCurrency(item.product.selling_price)}</p>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
@@ -94,7 +99,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         {items.length > 0 && (
           <div className="border-t border-[var(--border)] px-5 py-4">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm text-[var(--muted-foreground)]">Sous-total</span>
+              <span className="text-sm text-[var(--muted-foreground)]">المجموع الفرعي</span>
               <span className="text-lg font-bold">{formatCurrency(total)}</span>
             </div>
             <Link
@@ -102,10 +107,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               onClick={onClose}
               className="flex h-11 w-full items-center justify-center rounded-xl gradient-shop text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
             >
-              Procéder au checkout
+              متابعة الطلب
             </Link>
             <p className="mt-2 text-center text-[10px] text-[var(--muted-foreground)]">
-              Livraison à la livraison • Pas de paiement en ligne
+              الدفع عند الاستلام • لا يوجد دفع عبر الإنترنت
             </p>
           </div>
         )}

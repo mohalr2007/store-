@@ -8,16 +8,20 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
 
 export const metadata: Metadata = {
-  title: "COD Store — Achetez en toute confiance",
-  description: "Boutique en ligne COD ERP. Parcourez nos produits et commandez en quelques clics.",
+  title: "AL CARTEL SHOP DZ — تسوق بثقة",
+  description: "أفضل بوتيك في الجزائر. تشكيلات حصرية، والدفع عند الاستلام (COD) في جميع الولايات.",
+  icons: {
+    icon: "/favicon.jpg",
+    apple: "/logo.jpg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} min-h-screen bg-[var(--background)] font-sans text-[var(--foreground)] antialiased`}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <CartProvider>{children}</CartProvider>
-        <Toaster position="bottom-right" richColors />
+        <Toaster position="bottom-center" richColors />
       </body>
     </html>
   );

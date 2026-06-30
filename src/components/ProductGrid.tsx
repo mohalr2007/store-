@@ -29,43 +29,65 @@ export function ProductGrid({ products }: { products: Product[] }) {
   }, [products, search, selectedCategory]);
 
   return (
-    <div className="space-y-7">
-      <div className="grid gap-3 rounded-[1.5rem] border border-black/8 bg-white p-3 shop-shadow lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted-foreground)]" />
+    <div className="space-y-6 sm:space-y-8">
+      {/* Search & Filters */}
+      <div
+        className="grid gap-3 rounded-2xl p-3 sm:rounded-3xl sm:p-4 lg:grid-cols-[1fr_auto] lg:items-center"
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        {/* Search */}
+        <div className="relative min-w-0">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: "var(--fg-subtle)" }} />
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Rechercher un produit, SKU ou collection..."
-            className="h-12 w-full rounded-full border border-transparent bg-[var(--background)] pl-11 pr-4 text-sm font-medium outline-none transition focus:border-[var(--primary)]/30 focus:bg-white focus:ring-4 focus:ring-[var(--primary)]/10"
+            placeholder="ابحث عن منتج، رمز أو تشكيلة..."
+            className="shop-input h-12 rounded-xl pl-11 pr-4"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--secondary)] text-[var(--muted-foreground)]">
+        {/* Filters */}
+        <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 min-w-0">
+          <span
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+            style={{ background: "rgba(124,58,237,0.08)", color: "var(--neon-purple)" }}
+          >
             <SlidersHorizontal className="h-4 w-4" />
           </span>
           <button
             onClick={() => setSelectedCategory("all")}
             className={cn(
-              "h-10 shrink-0 rounded-full px-4 text-xs font-black uppercase tracking-[0.1em] transition",
+              "h-10 shrink-0 rounded-xl px-4 text-xs font-black uppercase tracking-[0.1em] transition-all",
               selectedCategory === "all"
-                ? "bg-[var(--ink)] text-white"
-                : "bg-[var(--secondary)] text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--primary)]"
+                ? "scale-105"
+                : "hover:scale-105"
             )}
+            style={{
+              background: selectedCategory === "all" ? "linear-gradient(135deg, #7c3aed, #a855f7)" : "var(--bg-input)",
+              color: selectedCategory === "all" ? "white" : "var(--fg-muted)",
+              boxShadow: selectedCategory === "all" ? "0 0 16px rgba(124,58,237,0.4)" : "none",
+            }}
           >
-            Tous
+            الكل
           </button>
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category!)}
               className={cn(
-                "h-10 shrink-0 rounded-full px-4 text-xs font-black uppercase tracking-[0.1em] transition",
+                "h-10 shrink-0 rounded-xl px-4 text-xs font-black uppercase tracking-[0.1em] transition-all",
                 selectedCategory === category
-                  ? "bg-[var(--ink)] text-white"
-                  : "bg-[var(--secondary)] text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--primary)]"
+                  ? "scale-105"
+                  : "hover:scale-105"
               )}
+              style={{
+                background: selectedCategory === category ? "linear-gradient(135deg, #7c3aed, #a855f7)" : "var(--bg-input)",
+                color: selectedCategory === category ? "white" : "var(--fg-muted)",
+                boxShadow: selectedCategory === category ? "0 0 16px rgba(124,58,237,0.4)" : "none",
+              }}
             >
               {category}
             </button>
@@ -73,15 +95,19 @@ export function ProductGrid({ products }: { products: Product[] }) {
         </div>
       </div>
 
+      {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="rounded-[1.5rem] border border-dashed border-[var(--border)] bg-white p-14 text-center">
-          <p className="text-base font-black">Aucun produit trouve</p>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-            Essayez une autre recherche ou retirez les filtres.
+        <div
+          className="rounded-3xl p-14 text-center"
+          style={{ border: "1px dashed var(--border-strong)", background: "var(--bg-card-2)" }}
+        >
+          <p className="text-base font-black" style={{ color: "var(--fg)" }}>لم يتم العثور على أي منتج</p>
+          <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>
+            حاول استخدام كلمات بحث مختلفة أو قم بإزالة عوامل التصفية.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
           {filtered.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
