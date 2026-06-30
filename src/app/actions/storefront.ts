@@ -28,10 +28,9 @@ function tenantId() {
 export async function listPublicProductsAction(limit?: number) {
   try {
     const supabase = createAdminClient();
-    const baseSelect = "*";
     let query = supabase
       .from("products")
-      .select(baseSelect)
+      .select("*, product_variants(*)")
       .eq("tenant_id", tenantId())
       .eq("is_active", true)
       .is("deleted_at", null)
@@ -42,7 +41,14 @@ export async function listPublicProductsAction(limit?: number) {
     const { data, error } = await query;
     if (error) throw error;
 
-    return { success: true, products: data || [] };
+    const products = (data || []).map((p: any) => ({
+      ...p,
+      variants: (p.product_variants || [])
+        .filter((v: any) => !v.deleted_at)
+        .sort((a: any, b: any) => a.sort_order - b.sort_order),
+    }));
+
+    return { success: true, products };
   } catch (error: any) {
     return { success: false, products: [], error: error.message || "Impossible de charger les produits." };
   }

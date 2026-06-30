@@ -5,8 +5,15 @@ import type { Product } from "@/lib/types";
 
 export function ProductCard({ product }: { product: Product }) {
   const image = getProductImage(product);
-  const isLowStock = product.current_quantity > 0 && product.current_quantity <= product.low_stock_threshold;
-  const isSoldOut = product.current_quantity <= 0;
+  
+  // KEY FIX: If variants exist, the real stock = sum of variant quantities
+  // This prevents the bug where adding variants makes the badge show "sold out"
+  const effectiveStock = (product.variants && product.variants.length > 0)
+    ? product.variants.reduce((sum, v) => sum + (v.quantity || 0), 0)
+    : product.current_quantity;
+
+  const isLowStock = effectiveStock > 0 && effectiveStock <= product.low_stock_threshold;
+  const isSoldOut = effectiveStock <= 0;
   const has360 = !!product.video_url;
 
   return (

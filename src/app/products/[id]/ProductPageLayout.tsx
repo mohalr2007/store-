@@ -25,6 +25,23 @@ export function ProductPageLayout({ product }: { product: Product }) {
     ? selectedColor.custom_name
     : null;
 
+  // KEY FIX: Compute effective stock correctly
+  // If product has variants, the stock to check is the sum of all variant quantities
+  // But for display (badge), show the selected variant's quantity
+  const hasVariants = (product.variants?.length || 0) > 0;
+  
+  // The stock of the currently selected variant (color or size, whichever is primary)
+  const selectedVariantStock = selectedColor 
+    ? selectedColor.quantity 
+    : selectedSize 
+      ? selectedSize.quantity 
+      : null;
+  
+  // Effective stock: variant-based if variants exist, otherwise product's own quantity
+  const effectiveStock = hasVariants 
+    ? (selectedVariantStock !== null ? selectedVariantStock : (product.variants || []).reduce((sum, v) => sum + (v.quantity || 0), 0))
+    : product.current_quantity;
+
   // Combine selection for the cart/order
   const currentVariantLabel = [
     selectedColor ? `Couleur: ${selectedColor.value}` : null,
@@ -99,7 +116,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
             <p className="text-4xl font-black gradient-text-gold sm:text-5xl">
               {formatCurrency(product.selling_price)}
             </p>
-            {product.current_quantity > 0 ? (
+            {effectiveStock > 0 ? (
               <span
                 className="badge"
                 style={{
@@ -142,12 +159,14 @@ export function ProductPageLayout({ product }: { product: Product }) {
                         onClick={() => setSelectedColor(variant)}
                         className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
                         style={{
-                          borderColor: selectedColor?.id === variant.id ? "var(--neon-purple)" : "var(--border)",
-                          background: selectedColor?.id === variant.id ? "rgba(124,58,237,0.1)" : "transparent",
-                          color: selectedColor?.id === variant.id ? "var(--neon-purple)" : "var(--fg)",
+                          borderColor: selectedColor?.id === variant.id ? "var(--neon-purple)" : variant.quantity <= 0 ? "rgba(244,63,94,0.3)" : "var(--border)",
+                          background: selectedColor?.id === variant.id ? "rgba(124,58,237,0.1)" : variant.quantity <= 0 ? "rgba(244,63,94,0.04)" : "transparent",
+                          color: selectedColor?.id === variant.id ? "var(--neon-purple)" : variant.quantity <= 0 ? "var(--neon-red)" : "var(--fg)",
+                          opacity: variant.quantity <= 0 ? 0.55 : 1,
                         }}
                       >
                         {variant.value}
+                        {variant.quantity <= 0 && <span className="ml-1 text-[10px] opacity-70">(نفذ)</span>}
                       </button>
                     ))}
                   </div>
@@ -188,7 +207,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
 
           {/* CTA buttons */}
           <div className="mt-7">
-            <AddToCartButton product={product} selectedVariant={currentVariantLabel} />
+            <AddToCartButton product={product} selectedVariant={currentVariantLabel} effectiveStock={effectiveStock} />
           </div>
 
           <div id="direct-order" className="mt-4">
