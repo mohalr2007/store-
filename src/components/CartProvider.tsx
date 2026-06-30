@@ -1,15 +1,14 @@
 "use client";
-// Force recompile
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { CartItem, Product, ProductVariant } from "@/lib/types";
 
 interface CartContextType {
   items: CartItem[];
   addItem: (product: Product, quantity?: number, variant?: ProductVariant) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (itemKey: string) => void;
+  updateQuantity: (itemKey: string, quantity: number) => void;
   clearCart: () => void;
   total: number;
   itemCount: number;
@@ -25,13 +24,25 @@ const CartContext = createContext<CartContextType>({
   itemCount: 0,
 });
 
+export function getCartItemKey(item: Pick<CartItem, "product" | "variant">) {
+  return `${item.product.id}:${item.variant?.id || "default"}`;
+}
+
+function getStockLimit(product: Product, variant?: ProductVariant) {
+  return variant ? Number(variant.quantity || 0) : Number(product.current_quantity || 0);
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem("cod-store-cart");
     if (saved) {
-      try { setItems(JSON.parse(saved)); } catch {}
+      try {
+        setItems(JSON.parse(saved));
+      } catch {
+        setItems([]);
+      }
     }
   }, []);
 
@@ -40,58 +51,66 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = (product: Product, quantity = 1, variant?: ProductVariant) => {
-    if (product.current_quantity <= 0) {
+    const stockLimit = getStockLimit(product, variant);
+    if (stockLimit <= 0) {
       toast.error("Ce produit est en rupture de stock.");
       return;
     }
 
     setItems((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      
+      const nextItemKey = `${product.id}:${variant?.id || "default"}`;
+      const existing = prev.find((item) => getCartItemKey(item) === nextItemKey);
+
       if (existing) {
         const newQty = existing.quantity + quantity;
-        if (newQty > product.current_quantity) {
-          toast.warning(`Désolé, il ne reste que ${product.current_quantity} unité(s) en stock.`);
-          return prev.map((i) =>
-            i.product.id === product.id ? { ...i, quantity: product.current_quantity } : i
+        if (newQty > stockLimit) {
+          toast.warning(`Desole, il ne reste que ${stockLimit} unite(s) en stock.`);
+          return prev.map((item) =>
+            getCartItemKey(item) === nextItemKey ? { ...item, quantity: stockLimit } : item
           );
         }
-        toast.success("Quantité mise à jour dans le panier !");
-        return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: newQty } : i
+
+        toast.success("Quantite mise a jour dans le panier !");
+        return prev.map((item) =>
+          getCartItemKey(item) === nextItemKey ? { ...item, quantity: newQty } : item
         );
       }
-      
-      toast.success("Produit ajouté au panier !");
-      return [...prev, { product, quantity, variant }];
+
+      toast.success("Produit ajoute au panier !");
+      return [...prev, { product, quantity: Math.min(quantity, stockLimit), variant }];
     });
   };
 
-  const removeItem = (productId: string) => {
-    setItems((prev) => prev.filter((i) => i.product.id !== productId));
+  const removeItem = (itemKey: string) => {
+    setItems((prev) => prev.filter((item) => getCartItemKey(item) !== itemKey));
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (itemKey: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(productId);
-      toast.info("Produit retiré du panier.");
+      removeItem(itemKey);
+      toast.info("Produit retire du panier.");
       return;
     }
 
     setItems((prev) => {
-      const existing = prev.find((i) => i.product.id === productId);
-      if (existing && quantity > existing.product.current_quantity) {
-        toast.warning(`Limite de stock atteinte (${existing.product.current_quantity}).`);
-        return prev.map((i) => (i.product.id === productId ? { ...i, quantity: existing.product.current_quantity } : i));
+      const existing = prev.find((item) => getCartItemKey(item) === itemKey);
+      const stockLimit = existing ? getStockLimit(existing.product, existing.variant) : 0;
+
+      if (existing && quantity > stockLimit) {
+        toast.warning(`Limite de stock atteinte (${stockLimit}).`);
+        return prev.map((item) =>
+          getCartItemKey(item) === itemKey ? { ...item, quantity: stockLimit } : item
+        );
       }
-      return prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i));
+
+      return prev.map((item) => (getCartItemKey(item) === itemKey ? { ...item, quantity } : item));
     });
   };
 
   const clearCart = () => setItems([]);
 
-  const total = items.reduce((s, i) => s + i.product.selling_price * i.quantity, 0);
-  const itemCount = items.reduce((s, i) => s + i.quantity, 0);
+  const total = items.reduce((sum, item) => sum + item.product.selling_price * item.quantity, 0);
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, total, itemCount }}>

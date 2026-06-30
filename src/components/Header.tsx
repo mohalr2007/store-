@@ -12,7 +12,7 @@ export function Header() {
   const navLinks = [
     { href: "/", label: "الرئيسية" },
     { href: "/products", label: "الكتالوج" },
-    { href: "/checkout", label: "الطلب" },
+    { href: "/checkout", label: "إتمام الطلب" },
   ];
 
   return (
@@ -29,12 +29,12 @@ export function Header() {
         <div
           className="promo-gradient px-4 py-1.5 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-white"
         >
-          <span className="inline-flex items-center gap-2">
-            <Zap className="h-3 w-3" />
-            <span className="hidden sm:inline">توصيل لجميع الولايات — الدفع عند الاستلام</span>
-            <span className="sm:hidden">الدفع عند الاستلام</span>
-            <Zap className="h-3 w-3" />
-          </span>
+            <span className="inline-flex items-center gap-2">
+              <Zap className="h-3 w-3" />
+              <span className="hidden sm:inline">توصيل لجميع الولايات — الدفع عند الاستلام</span>
+              <span className="sm:hidden">الدفع عند الاستلام</span>
+              <Zap className="h-3 w-3" />
+            </span>
         </div>
 
         {/* Main nav */}
@@ -84,8 +84,8 @@ export function Header() {
               href="/cart"
               className="relative flex h-9 items-center gap-2 rounded-xl px-3 text-sm font-black text-white transition-all hover:scale-105"
               style={{
-                background: "linear-gradient(135deg, #1ab8ce, #45d4e8)",
-                boxShadow: "0 0 16px rgba(69,212,232,0.4)",
+                background: "linear-gradient(135deg, var(--brand-dark), var(--brand))",
+                boxShadow: "0 0 10px rgba(69,212,232,0.14)",
               }}
             >
               <ShoppingBag className="h-4 w-4" />
@@ -99,16 +99,16 @@ export function Header() {
             </Link>
 
             {/* Mobile menu toggle */}
-            <button
-              onClick={() => setMobileOpen((v) => !v)}
+              <button
+                onClick={() => setMobileOpen((v) => !v)}
               className="flex h-9 w-9 items-center justify-center rounded-xl md:hidden"
               style={{
                 background: "rgba(69,212,232,0.1)",
                 border: "1px solid var(--border)",
                 color: "var(--fg)",
               }}
-              aria-label="Menu"
-            >
+                aria-label="القائمة"
+              >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>

@@ -58,8 +58,8 @@ export function ProductCard({ product }: { product: Product }) {
             <span
               className="badge"
               style={{
-                background: "rgba(69,212,232,0.75)",
-                color: "white",
+                background: "rgba(69,212,232,0.12)",
+                color: "var(--fg)",
                 backdropFilter: "blur(4px)",
               }}
             >
@@ -85,7 +85,7 @@ export function ProductCard({ product }: { product: Product }) {
           {has360 && (
             <span
               className="badge"
-              style={{ background: "rgba(0,212,255,0.8)", color: "#0a0a0f" }}
+              style={{ background: "rgba(69,212,232,0.14)", color: "var(--fg)" }}
             >
               <Play className="h-2.5 w-2.5" fill="currentColor" />
               360°
@@ -97,8 +97,8 @@ export function ProductCard({ product }: { product: Product }) {
         <span
           className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-2 items-center justify-center rounded-xl text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-3 sm:right-3 sm:h-9 sm:w-9"
           style={{
-            background: "linear-gradient(135deg, #1ab8ce, #00d4ff)",
-            boxShadow: "0 0 12px rgba(69,212,232,0.6)",
+            background: "linear-gradient(135deg, var(--brand-dark), var(--brand))",
+            boxShadow: "0 0 10px rgba(69,212,232,0.14)",
           }}
         >
           <ArrowUpRight className="h-4 w-4" />

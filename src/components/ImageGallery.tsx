@@ -39,8 +39,8 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
         className="relative aspect-square overflow-hidden rounded-2xl sm:aspect-[4/5] sm:rounded-3xl"
         style={{
           background: "var(--bg-card)",
-          border: "1px solid var(--border-strong)",
-          boxShadow: "var(--shadow-glow)",
+          border: "1px solid var(--border)",
+          boxShadow: "var(--shadow)",
         }}
       >
         {activeIndex === "video" && product.video_url ? (
@@ -57,12 +57,12 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
               onClick={() => setIsZoomed(true)}
               className="absolute right-3 bottom-3 flex h-9 w-9 items-center justify-center rounded-xl transition-all hover:scale-110 sm:h-10 sm:w-10"
               style={{
-                background: "rgba(69,212,232,0.7)",
-                border: "1px solid rgba(69,212,232,0.5)",
+                background: "rgba(69,212,232,0.16)",
+                border: "1px solid rgba(69,212,232,0.28)",
                 backdropFilter: "blur(8px)",
               }}
             >
-              <ZoomIn className="h-4 w-4 text-white" />
+              <ZoomIn className="h-4 w-4" style={{ color: "var(--fg)" }} />
             </button>
           </>
         ) : (
@@ -79,8 +79,8 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
           <span
             className="badge absolute left-3 top-3"
             style={{
-              background: "rgba(69,212,232,0.75)",
-              color: "white",
+              background: "rgba(69,212,232,0.12)",
+              color: "var(--fg)",
               backdropFilter: "blur(8px)",
               padding: "0.3rem 0.75rem",
             }}
@@ -94,9 +94,9 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
           <div
             className="badge absolute top-3 right-3"
             style={{
-              background: "rgba(0,212,255,0.2)",
-              border: "1px solid rgba(0,212,255,0.4)",
-              color: "var(--neon-blue)",
+              background: "rgba(69,212,232,0.12)",
+              border: "1px solid rgba(69,212,232,0.22)",
+              color: "var(--fg)",
               padding: "0.3rem 0.75rem",
             }}
           >
@@ -118,16 +118,16 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
                 activeIndex === "video" ? "scale-105" : "opacity-55 hover:opacity-80"
               )}
               style={{
-                background: "#0a0a0f",
+                background: "var(--bg-card)",
                 border: activeIndex === "video"
-                  ? "2px solid var(--neon-blue)"
+                  ? "2px solid rgba(69,212,232,0.42)"
                   : "2px solid var(--border)",
-                boxShadow: activeIndex === "video" ? "0 0 12px rgba(0,212,255,0.4)" : "none",
+                boxShadow: activeIndex === "video" ? "0 0 10px rgba(69,212,232,0.16)" : "none",
               }}
             >
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Play className="h-4 w-4" style={{ color: "var(--neon-blue)" }} />
-                <span className="text-[8px] font-black uppercase" style={{ color: "var(--neon-blue)" }}>360°</span>
+                <Play className="h-4 w-4" style={{ color: "var(--fg)" }} />
+                <span className="text-[8px] font-black uppercase tracking-[0.12em]" style={{ color: "var(--fg)" }}>360°</span>
               </div>
             </button>
           )}
@@ -144,9 +144,9 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
               style={{
                 background: "var(--bg-card)",
                 border: activeIndex === idx
-                  ? "2px solid var(--neon-blue)"
+                  ? "2px solid rgba(69,212,232,0.42)"
                   : "2px solid var(--border)",
-                boxShadow: activeIndex === idx ? "0 0 12px rgba(69,212,232,0.4)" : "none",
+                boxShadow: activeIndex === idx ? "0 0 10px rgba(69,212,232,0.16)" : "none",
               }}
             >
               <img src={img} alt="" className="h-full w-full object-cover" />

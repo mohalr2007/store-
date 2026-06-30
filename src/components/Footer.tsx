@@ -23,9 +23,9 @@ export function Footer() {
               </div>
             </div>
 
-            <p className="max-w-xs text-sm leading-6" style={{ color: "var(--fg-muted)" }}>
-              أفضل بوتيك في الجزائر. تشكيلات حصرية مع خدمة الدفع عند الاستلام (COD) في جميع الولايات.
-            </p>
+              <p className="max-w-xs text-sm leading-6" style={{ color: "var(--fg-muted)" }}>
+                أفضل بوتيك في الجزائر. تشكيلات حصرية مع خدمة الدفع عند الاستلام في جميع الولايات.
+              </p>
 
             <div className="mt-5 flex gap-3">
               {[
@@ -50,13 +50,13 @@ export function Footer() {
 
           {/* Service */}
           <div>
-            <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
-              خدمات
-            </p>
+              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
+                الخدمات
+              </p>
             <div className="space-y-3">
               {[
                 { href: "/products", label: "كتالوج المنتجات" },
-                { href: "/checkout", label: "الطلب والدفع عند الاستلام" },
+                { href: "/checkout", label: "إتمام الطلب" },
                 { href: "/cart", label: "سلة المشتريات" },
               ].map((link) => (
                 <Link
@@ -74,15 +74,15 @@ export function Footer() {
 
           {/* Info */}
           <div>
-            <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
-              معلومات
-            </p>
+              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
+                معلومات
+              </p>
             <div className="space-y-2.5 text-sm" style={{ color: "var(--fg-muted)" }}>
-              <p>🚚 توصيل خلال 24-72 ساعة</p>
-              <p>💳 الدفع عند الاستلام</p>
-              <p>📞 تأكيد الطلب عبر الهاتف</p>
-              <p>✅ منتجات أصلية ومضمونة</p>
-              <p>📍 توصيل لجميع ولايات الجزائر</p>
+            <p>🚚 توصيل خلال 24-72 ساعة</p>
+            <p>💳 الدفع عند الاستلام</p>
+            <p>📞 تأكيد الطلب عبر الهاتف</p>
+            <p>✅ منتجات أصلية ومضمونة</p>
+            <p>📍 توصيل لجميع ولايات الجزائر</p>
             </div>
           </div>
         </div>

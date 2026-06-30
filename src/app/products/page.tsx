@@ -22,7 +22,7 @@ export default async function ProductsPage() {
           <div className="shop-container py-10 sm:py-16">
             <p
               className="mb-2 text-xs font-black uppercase tracking-[0.18em]"
-              style={{ color: "var(--neon-purple)" }}
+              style={{ color: "var(--neon-blue)" }}
             >
               الكتالوج
             </p>
@@ -38,20 +38,18 @@ export default async function ProductsPage() {
                   className="mt-4 max-w-xl text-sm leading-6 sm:mt-5 sm:text-base sm:leading-7"
                   style={{ color: "var(--fg-muted)" }}
                 >
-                  تصفح التشكيلات، قم بتصفية النتائج بسرعة، ثم اطلب والدفع عند الاستلام (COD) بدون دفع إلكتروني.
+                  تصفح التشكيلات، وفلتر النتائج بسرعة، ثم اطلب وادفع عند الاستلام في جميع الولايات.
                 </p>
               </div>
-              <div
-                className="card rounded-2xl px-6 py-5 text-center"
-              >
-                <p className="text-3xl font-black gradient-text-purple sm:text-4xl">
+              <div className="card rounded-2xl px-6 py-5 text-center">
+                <p className="text-3xl font-black gradient-text-brand sm:text-4xl">
                   {products.length}
                 </p>
                 <p
                   className="mt-1 text-xs font-bold uppercase tracking-[0.14em]"
                   style={{ color: "var(--fg-muted)" }}
                 >
-                  منتج
+                  منتج متاح
                 </p>
               </div>
             </div>

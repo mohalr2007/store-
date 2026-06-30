@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
-import { BadgeCheck, Clock3, ShieldCheck, Truck } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { formatCurrency, getProductImage } from "@/lib/utils";
+import { getProductImage } from "@/lib/utils";
 import { getPublicProductAction } from "@/app/actions/storefront";
 import { ProductPageLayout } from "./ProductPageLayout";
 import type { Metadata } from "next";
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     title: `${product.name} | AL CARTEL SHOP DZ`,
     description:
       product.description ||
-      `اشتري ${product.name} بأفضل سعر مع الدفع عند الاستلام (COD) في جميع أنحاء الجزائر.`,
+      `اشترِ ${product.name} بأفضل سعر مع الدفع عند الاستلام في جميع أنحاء الجزائر.`,
     openGraph: {
       title: product.name,
       description: product.description || "الدفع عند الاستلام",
@@ -47,7 +46,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
       </main>
 
-      {/* Mobile sticky CTA */}
       <div
         className="fixed bottom-0 left-0 right-0 z-40 px-4 py-3 pb-safe lg:hidden"
         style={{
@@ -59,8 +57,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       >
         <a
           href="#direct-order"
-          className="btn-primary w-full h-14 text-sm"
-          style={{ borderRadius: "1rem", boxShadow: "0 0 28px rgba(124,58,237,0.5)" }}
+          className="btn-primary h-14 w-full text-sm"
+          style={{ borderRadius: "1rem", boxShadow: "0 0 28px rgba(69,212,232,0.5)" }}
         >
           اطلب الآن — الدفع عند الاستلام
         </a>

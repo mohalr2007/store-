@@ -3,35 +3,25 @@
 import { useState } from "react";
 import { Check, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
-import type { Product } from "@/lib/types";
+import type { Product, ProductVariant } from "@/lib/types";
 
-export function AddToCartButton({ product, selectedVariant, effectiveStock }: { 
-  product: Product; 
-  selectedVariant?: string;
+export function AddToCartButton({
+  product,
+  selectedVariant,
+  effectiveStock,
+}: {
+  product: Product;
+  selectedVariant?: ProductVariant | null;
   effectiveStock?: number;
 }) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
 
-  // Use effectiveStock if provided (variant-aware), otherwise fallback to product.current_quantity
   const stockToCheck = effectiveStock !== undefined ? effectiveStock : product.current_quantity;
   const isOutOfStock = stockToCheck <= 0;
 
   const handleAdd = () => {
-    // Construct a dummy ProductVariant if a variant string is selected
-    const variantObj = selectedVariant ? {
-      id: "custom-variant",
-      tenant_id: product.tenant_id,
-      product_id: product.id,
-      attribute: "custom",
-      custom_name: null,
-      value: selectedVariant,
-      quantity: 1,
-      sort_order: 0,
-      created_at: new Date().toISOString(),
-    } : undefined;
-
-    addItem(product, 1, variantObj);
+    addItem(product, 1, selectedVariant || undefined);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -50,12 +40,12 @@ export function AddToCartButton({ product, selectedVariant, effectiveStock }: {
       {added ? (
         <>
           <Check className="h-4 w-4" />
-          تمت الإضافة للسلة !
+          تمت الإضافة إلى السلة!
         </>
       ) : (
         <>
           <ShoppingCart className="h-4 w-4" />
-          {isOutOfStock ? "نفذ من المخزون" : "أضف إلى السلة"}
+          {isOutOfStock ? "نفد من المخزون" : "أضف إلى السلة"}
         </>
       )}
     </button>

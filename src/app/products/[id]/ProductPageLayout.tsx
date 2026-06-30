@@ -9,64 +9,48 @@ import { formatCurrency } from "@/lib/utils";
 import type { Product, ProductVariant } from "@/lib/types";
 
 export function ProductPageLayout({ product }: { product: Product }) {
-  // Extract grouped variants
   const colorVariants = product.variants?.filter((v) => v.attribute === "color") || [];
   const sizeVariants = product.variants?.filter((v) => v.attribute === "size") || [];
 
-  const [selectedColor, setSelectedColor] = useState<ProductVariant | null>(
-    colorVariants.length > 0 ? colorVariants[0] : null
-  );
+  const [selectedColor, setSelectedColor] = useState<ProductVariant | null>(null);
   const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(
     sizeVariants.length > 0 ? sizeVariants[0] : null
   );
 
-  // Determine active image from selected color
   const activeImageUrl = selectedColor?.custom_name?.startsWith("http")
     ? selectedColor.custom_name
     : null;
 
-  // KEY FIX: Compute effective stock correctly
-  // If product has variants, the stock to check is the sum of all variant quantities
-  // But for display (badge), show the selected variant's quantity
   const hasVariants = (product.variants?.length || 0) > 0;
-  
-  // The stock of the currently selected variant (color or size, whichever is primary)
-  const selectedVariantStock = selectedColor 
-    ? selectedColor.quantity 
-    : selectedSize 
-      ? selectedSize.quantity 
+  const selectedVariantStock = selectedColor
+    ? selectedColor.quantity
+    : selectedSize
+      ? selectedSize.quantity
       : null;
-  
-  // Effective stock: variant-based if variants exist, otherwise product's own quantity
-  const effectiveStock = hasVariants 
+  const selectedStockVariant = selectedColor || selectedSize || null;
+  const effectiveStock = hasVariants
     ? (selectedVariantStock !== null ? selectedVariantStock : (product.variants || []).reduce((sum, v) => sum + (v.quantity || 0), 0))
     : product.current_quantity;
 
-  // Combine selection for the cart/order
   const currentVariantLabel = [
-    selectedColor ? `Couleur: ${selectedColor.value}` : null,
-    selectedSize ? `Taille: ${selectedSize.value}` : null,
+    selectedColor ? `اللون: ${selectedColor.value}` : null,
+    selectedSize ? `المقاس: ${selectedSize.value}` : null,
   ].filter(Boolean).join(" / ");
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 items-start">
-      {/* ── LEFT: Gallery ── */}
+    <div className="grid items-start gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
       <section className="min-w-0">
         <ImageGallery product={product} activeImageUrl={activeImageUrl} colorSelected={!!selectedColor} />
 
-        {/* Trust cards */}
         <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           {[
-            { icon: Truck, text: "توصيل 24-72 ساعة", color: "var(--neon-purple)" },
+            { icon: Truck, text: "توصيل خلال 24-72 ساعة", color: "var(--neon-blue)" },
             { icon: ShieldCheck, text: "الدفع عند الاستلام", color: "var(--neon-blue)" },
             { icon: BadgeCheck, text: "تأكيد الطلب", color: "var(--neon-gold)" },
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <div
-                key={item.text}
-                className="card rounded-xl p-3 text-xs font-semibold sm:rounded-2xl sm:p-4"
-              >
+              <div key={item.text} className="card rounded-xl p-3 text-xs font-semibold sm:rounded-2xl sm:p-4">
                 <Icon className="mb-2 h-4 w-4 sm:h-5 sm:w-5" style={{ color: item.color }} />
                 <span style={{ color: "var(--fg)" }}>{item.text}</span>
               </div>
@@ -75,17 +59,15 @@ export function ProductPageLayout({ product }: { product: Product }) {
         </div>
       </section>
 
-      {/* ── RIGHT: Info ── */}
       <section className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-        <div className="card-glow rounded-2xl p-5 sm:rounded-3xl sm:p-7 lg:p-9">
-          {/* Category */}
+        <div className="card rounded-2xl p-5 sm:rounded-3xl sm:p-7 lg:p-9">
           {product.category && (
             <span
               className="badge"
               style={{
-                background: "rgba(124,58,237,0.12)",
+                background: "rgba(69,212,232,0.08)",
                 border: "1px solid var(--border-strong)",
-                color: "var(--neon-purple)",
+                color: "var(--fg)",
                 padding: "0.35rem 0.85rem",
                 fontSize: "0.65rem",
               }}
@@ -94,15 +76,10 @@ export function ProductPageLayout({ product }: { product: Product }) {
             </span>
           )}
 
-          {/* Name */}
-          <h1
-            className="mt-4 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl"
-            style={{ color: "var(--fg)" }}
-          >
+          <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl" style={{ color: "var(--fg)" }}>
             {product.name}
           </h1>
 
-          {/* SKU */}
           {product.sku && (
             <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em]" style={{ color: "var(--fg-subtle)" }}>
               رمز المنتج: {product.sku}
@@ -111,7 +88,6 @@ export function ProductPageLayout({ product }: { product: Product }) {
 
           <div className="divider-neon my-5" />
 
-          {/* Price + stock */}
           <div className="flex flex-wrap items-center gap-4">
             <p className="text-4xl font-black gradient-text-gold sm:text-5xl">
               {formatCurrency(product.selling_price)}
@@ -120,115 +96,122 @@ export function ProductPageLayout({ product }: { product: Product }) {
               <span
                 className="badge"
                 style={{
-                  background: "rgba(16,185,129,0.1)",
-                  border: "1px solid rgba(16,185,129,0.3)",
+                  background: "rgba(16,185,129,0.08)",
+                  border: "1px solid rgba(16,185,129,0.22)",
                   color: "var(--neon-green)",
                   padding: "0.4rem 0.9rem",
                   fontSize: "0.7rem",
                 }}
               >
-                ✓ متوفر في المخزون
+                متوفر في المخزون
               </span>
             ) : (
               <span
                 className="badge"
                 style={{
-                  background: "rgba(244,63,94,0.1)",
-                  border: "1px solid rgba(244,63,94,0.3)",
+                  background: "rgba(244,63,94,0.08)",
+                  border: "1px solid rgba(244,63,94,0.22)",
                   color: "var(--neon-red)",
                   padding: "0.4rem 0.9rem",
                   fontSize: "0.7rem",
                 }}
               >
-                نفذ من المخزون
+                نفد من المخزون
               </span>
             )}
           </div>
 
-          {/* Variants Selectors */}
           {(colorVariants.length > 0 || sizeVariants.length > 0) && (
             <div className="mt-6 space-y-4">
-              {/* Colors */}
               {colorVariants.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase text-[var(--fg-muted)]">اللون</p>
-                  <div className="flex flex-wrap gap-2">
-                    {colorVariants.map((variant) => (
-                      <button
-                        key={variant.id}
-                        onClick={() => setSelectedColor(selectedColor?.id === variant.id ? null : variant)}
-                        className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
-                        style={{
-                          borderColor: selectedColor?.id === variant.id ? "var(--neon-purple)" : variant.quantity <= 0 ? "rgba(244,63,94,0.3)" : "var(--border)",
-                          background: selectedColor?.id === variant.id ? "rgba(124,58,237,0.1)" : variant.quantity <= 0 ? "rgba(244,63,94,0.04)" : "transparent",
-                          color: selectedColor?.id === variant.id ? "var(--neon-purple)" : variant.quantity <= 0 ? "var(--neon-red)" : "var(--fg)",
-                          opacity: variant.quantity <= 0 ? 0.55 : 1,
-                        }}
-                      >
-                        {variant.value}
-                        {variant.quantity <= 0 && <span className="ml-1 text-[10px] opacity-70">(نفذ)</span>}
-                      </button>
-                    ))}
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--fg-muted)]">اللون</p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {colorVariants.map((variant) => {
+                      const isSelected = selectedColor?.id === variant.id;
+                      return (
+                        <button
+                          key={variant.id}
+                          onClick={() => setSelectedColor(isSelected ? null : variant)}
+                          className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
+                          style={{
+                            borderColor: isSelected ? "rgba(69,212,232,0.35)" : variant.quantity <= 0 ? "rgba(244,63,94,0.28)" : "var(--border)",
+                            background: isSelected ? "rgba(69,212,232,0.12)" : variant.quantity <= 0 ? "rgba(244,63,94,0.04)" : "var(--bg-card)",
+                            color: variant.quantity <= 0 ? "var(--neon-red)" : "var(--fg)",
+                            boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
+                            opacity: variant.quantity <= 0 ? 0.6 : 1,
+                          }}
+                        >
+                          <span className="inline-flex items-center gap-2">
+                            <span
+                              className="h-2.5 w-2.5 rounded-full"
+                              style={{
+                                background: isSelected ? "var(--brand)" : "rgba(16,41,47,0.16)",
+                              }}
+                            />
+                            {variant.value}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
-              {/* Sizes */}
               {sizeVariants.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase text-[var(--fg-muted)]">المقاس</p>
-                  <div className="flex flex-wrap gap-2">
-                    {sizeVariants.map((variant) => (
-                      <button
-                        key={variant.id}
-                        onClick={() => setSelectedSize(selectedSize?.id === variant.id ? null : variant)}
-                        className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
-                        style={{
-                          borderColor: selectedSize?.id === variant.id ? "var(--neon-blue)" : "var(--border)",
-                          background: selectedSize?.id === variant.id ? "rgba(0,212,255,0.1)" : "transparent",
-                          color: selectedSize?.id === variant.id ? "var(--neon-blue)" : "var(--fg)",
-                        }}
-                      >
-                        {variant.value}
-                      </button>
-                    ))}
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--fg-muted)]">المقاس</p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {sizeVariants.map((variant) => {
+                      const isSelected = selectedSize?.id === variant.id;
+                      return (
+                        <button
+                          key={variant.id}
+                          onClick={() => setSelectedSize(isSelected ? null : variant)}
+                          className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
+                          style={{
+                            borderColor: isSelected ? "rgba(69,212,232,0.35)" : "var(--border)",
+                            background: isSelected ? "rgba(69,212,232,0.12)" : "var(--bg-card)",
+                            color: "var(--fg)",
+                            boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
+                          }}
+                        >
+                          {variant.value}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* Description */}
           {product.description && (
             <p className="mt-5 text-sm leading-7" style={{ color: "var(--fg-muted)" }}>
               {product.description}
             </p>
           )}
 
-          {/* CTA buttons */}
           <div className="mt-7">
-            <AddToCartButton product={product} selectedVariant={currentVariantLabel} effectiveStock={effectiveStock} />
+            <AddToCartButton product={product} selectedVariant={selectedStockVariant} effectiveStock={effectiveStock} />
           </div>
 
           <div id="direct-order" className="mt-4">
-            <DirectOrderForm product={product} selectedVariant={currentVariantLabel} />
+            <DirectOrderForm
+              product={product}
+              selectedVariant={selectedStockVariant}
+              selectedVariantLabel={currentVariantLabel}
+              effectiveStock={effectiveStock}
+            />
           </div>
 
-          {/* Info list */}
-          <div
-            className="mt-7 divide-y rounded-2xl"
-            style={{
-              background: "rgba(124,58,237,0.04)",
-              border: "1px solid var(--border)",
-              borderColor: "var(--border)",
-            }}
-          >
+          <div className="mt-7 divide-y rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
             {[
               {
                 icon: Clock3,
                 title: "تأكيد الطلب",
                 text: "يقوم الوكيل بتأكيد طلبك قبل الشحن.",
-                color: "var(--neon-purple)",
+                color: "var(--neon-blue)",
               },
               {
                 icon: Truck,
@@ -238,14 +221,14 @@ export function ProductPageLayout({ product }: { product: Product }) {
               },
               {
                 icon: ShieldCheck,
-                title: "ثقة",
+                title: "الثقة",
                 text: "بياناتك تستخدم فقط لمعالجة الطلب.",
                 color: "var(--neon-gold)",
               },
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="flex gap-3 p-4" style={{ borderColor: "var(--border)" }}>
+                <div key={item.title} className="flex gap-3 p-4">
                   <Icon className="mt-0.5 h-5 w-5 shrink-0" style={{ color: item.color }} />
                   <div>
                     <p className="text-sm font-black" style={{ color: "var(--fg)" }}>{item.title}</p>

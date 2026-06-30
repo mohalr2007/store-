@@ -147,7 +147,7 @@ export function Interactive360Video({ src, poster, className }: { src: string; p
       {/* Overlay hint */}
       {isLoaded && !hasError && !isDragging && (
         <div className={cn(
-          "absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 text-[var(--ink)] px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.1em] flex items-center gap-2 shadow-xl backdrop-blur pointer-events-none transition-all duration-300",
+          "absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/88 text-[var(--fg)] px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.1em] flex items-center gap-2 shadow-xl backdrop-blur pointer-events-none transition-all duration-300",
           isHovered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-2 scale-95"
         )}>
           <MoveHorizontal className="w-4 h-4" />

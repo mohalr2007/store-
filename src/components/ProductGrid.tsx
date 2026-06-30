@@ -66,9 +66,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 : "hover:scale-105"
             )}
             style={{
-              background: selectedCategory === "all" ? "linear-gradient(135deg, #1ab8ce, #45d4e8)" : "var(--bg-input)",
+              background: selectedCategory === "all" ? "linear-gradient(135deg, var(--brand-dark), var(--brand))" : "var(--bg-input)",
               color: selectedCategory === "all" ? "white" : "var(--fg-muted)",
-              boxShadow: selectedCategory === "all" ? "0 0 16px rgba(69,212,232,0.4)" : "none",
+              boxShadow: selectedCategory === "all" ? "0 0 10px rgba(69,212,232,0.16)" : "none",
             }}
           >
             الكل
@@ -84,9 +84,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
                   : "hover:scale-105"
               )}
               style={{
-                background: selectedCategory === category ? "linear-gradient(135deg, #1ab8ce, #45d4e8)" : "var(--bg-input)",
+                background: selectedCategory === category ? "linear-gradient(135deg, var(--brand-dark), var(--brand))" : "var(--bg-input)",
                 color: selectedCategory === category ? "white" : "var(--fg-muted)",
-                boxShadow: selectedCategory === category ? "0 0 16px rgba(69,212,232,0.4)" : "none",
+                boxShadow: selectedCategory === category ? "0 0 10px rgba(69,212,232,0.16)" : "none",
               }}
             >
               {category}
