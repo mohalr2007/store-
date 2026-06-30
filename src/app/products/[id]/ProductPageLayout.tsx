@@ -156,7 +156,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
                     {colorVariants.map((variant) => (
                       <button
                         key={variant.id}
-                        onClick={() => setSelectedColor(variant)}
+                        onClick={() => setSelectedColor(selectedColor?.id === variant.id ? null : variant)}
                         className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
                         style={{
                           borderColor: selectedColor?.id === variant.id ? "var(--neon-purple)" : variant.quantity <= 0 ? "rgba(244,63,94,0.3)" : "var(--border)",
@@ -181,7 +181,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
                     {sizeVariants.map((variant) => (
                       <button
                         key={variant.id}
-                        onClick={() => setSelectedSize(variant)}
+                        onClick={() => setSelectedSize(selectedSize?.id === variant.id ? null : variant)}
                         className="rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
                         style={{
                           borderColor: selectedSize?.id === variant.id ? "var(--neon-blue)" : "var(--border)",
