@@ -1,5 +1,48 @@
-﻿import Link from "next/link";
-import { ArrowRight, Instagram, Mail, Phone } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Facebook, Instagram, Mail, MessageCircle, Music2 } from "lucide-react";
+
+const socialLinks = [
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/workaccount_of_cartel?igsh=MTg2ODN5OGQ1eDliaA==",
+    label: "Instagram",
+    color: "var(--neon-blue)",
+    bg: "rgba(69,212,232,0.1)",
+    border: "rgba(69,212,232,0.3)",
+  },
+  {
+    icon: Facebook,
+    href: "https://www.facebook.com/share/1H7hg28SMb/",
+    label: "Facebook",
+    color: "var(--neon-blue)",
+    bg: "rgba(69,212,232,0.1)",
+    border: "rgba(69,212,232,0.3)",
+  },
+  {
+    icon: Music2,
+    href: "https://www.tiktok.com/@al_cartel_shop_dz",
+    label: "TikTok",
+    color: "var(--neon-blue)",
+    bg: "rgba(69,212,232,0.1)",
+    border: "rgba(69,212,232,0.3)",
+  },
+  {
+    icon: MessageCircle,
+    href: "https://wa.me/213797823273",
+    label: "WhatsApp",
+    color: "var(--neon-green)",
+    bg: "rgba(16,185,129,0.1)",
+    border: "rgba(16,185,129,0.28)",
+  },
+  {
+    icon: Mail,
+    href: "mailto:alcatelshopdz@gmail.com",
+    label: "Email",
+    color: "var(--neon-gold)",
+    bg: "rgba(251,191,36,0.1)",
+    border: "rgba(251,191,36,0.25)",
+  },
+];
 
 export function Footer() {
   return (
@@ -8,8 +51,6 @@ export function Footer() {
 
       <div className="shop-container py-10 sm:py-14">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
-
-          {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-5 flex items-center gap-2">
               <div className="flex h-14 w-14 items-center justify-center overflow-hidden">
@@ -23,21 +64,20 @@ export function Footer() {
               </div>
             </div>
 
-              <p className="max-w-xs text-sm leading-6" style={{ color: "var(--fg-muted)" }}>
-                أفضل بوتيك في الجزائر. تشكيلات حصرية مع خدمة الدفع عند الاستلام في جميع الولايات.
-              </p>
+            <p className="max-w-xs text-sm leading-6" style={{ color: "var(--fg-muted)" }}>
+              أفضل بوتيك في الجزائر. تشكيلات حصرية مع خدمة الدفع عند الاستلام في جميع الولايات.
+            </p>
 
-            <div className="mt-5 flex gap-3">
-              {[
-                { icon: Instagram, color: "var(--neon-blue)", bg: "rgba(69,212,232,0.1)", border: "rgba(69,212,232,0.3)" },
-                { icon: Phone, color: "var(--neon-blue)", bg: "rgba(0,212,255,0.1)", border: "rgba(0,212,255,0.25)" },
-                { icon: Mail, color: "var(--neon-gold)", bg: "rgba(251,191,36,0.1)", border: "rgba(251,191,36,0.25)" },
-              ].map((item, i) => {
+            <div className="mt-5 flex flex-wrap gap-3">
+              {socialLinks.map((item) => {
                 const Icon = item.icon;
                 return (
                   <a
-                    key={i}
-                    href="#"
+                    key={item.label}
+                    href={item.href}
+                    target={item.href.startsWith("mailto:") ? undefined : "_blank"}
+                    rel={item.href.startsWith("mailto:") ? undefined : "noreferrer"}
+                    aria-label={item.label}
                     className="flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:scale-110"
                     style={{ background: item.bg, border: `1px solid ${item.border}` }}
                   >
@@ -48,11 +88,10 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Service */}
           <div>
-              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
-                الخدمات
-              </p>
+            <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
+              الخدمات
+            </p>
             <div className="space-y-3">
               {[
                 { href: "/products", label: "كتالوج المنتجات" },
@@ -72,17 +111,16 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Info */}
           <div>
-              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
-                معلومات
-              </p>
+            <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
+              معلومات
+            </p>
             <div className="space-y-2.5 text-sm" style={{ color: "var(--fg-muted)" }}>
-            <p>🚚 توصيل خلال 24-72 ساعة</p>
-            <p>💳 الدفع عند الاستلام</p>
-            <p>📞 تأكيد الطلب عبر الهاتف</p>
-            <p>✅ منتجات أصلية ومضمونة</p>
-            <p>📍 توصيل لجميع ولايات الجزائر</p>
+              <p>🚚 توصيل خلال 24-72 ساعة</p>
+              <p>💳 الدفع عند الاستلام</p>
+              <p>📞 تأكيد الطلب عبر الهاتف</p>
+              <p>✅ منتجات أصلية ومضمونة</p>
+              <p>📍 توصيل لجميع ولايات الجزائر</p>
             </div>
           </div>
         </div>
@@ -97,4 +135,3 @@ export function Footer() {
     </footer>
   );
 }
-
