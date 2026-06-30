@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -42,12 +42,23 @@ export function Header() {
         {/* Main nav */}
         <div className="shop-container flex h-16 items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1.5 shrink-0">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div
+              className="flex items-center justify-center overflow-hidden shrink-0 transition-all duration-300 group-hover:scale-105"
+              style={{
+                width: "52px",
+                height: "52px",
+                borderRadius: "14px",
+                background: "#ffffff",
+                border: "2px solid rgba(69,212,232,0.5)",
+                boxShadow: "0 0 14px rgba(69,212,232,0.3), 0 2px 8px rgba(0,0,0,0.15)",
+                padding: "3px",
+              }}
+            >
               <img
                 src="/logo.jpg"
                 alt="AL CARTEL SHOP DZ"
-                className="h-full w-full object-contain"
+                style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "10px" }}
               />
             </div>
             <div className="leading-tight">
