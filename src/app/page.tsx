@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight, BadgeCheck, Clock3, Headphones, ShieldCheck, Truck, Zap, Star } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -25,7 +25,7 @@ export default async function HomePage() {
           {/* Glow blobs */}
           <div
             className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full opacity-25 blur-[100px] sm:h-[500px] sm:w-[500px]"
-            style={{ background: "radial-gradient(circle, #7c3aed, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, #1ab8ce, transparent 70%)" }}
           />
           <div
             className="pointer-events-none absolute top-1/2 right-0 h-72 w-72 rounded-full opacity-15 blur-[80px] sm:h-96 sm:w-96"
@@ -38,7 +38,7 @@ export default async function HomePage() {
               <div
                 className="relative flex h-[240px] w-[240px] items-center justify-center sm:h-[320px] sm:w-[320px] lg:h-[460px] lg:w-[460px]"
                 style={{
-                  filter: "drop-shadow(0 0 60px rgba(0,212,255,0.25)) drop-shadow(0 0 120px rgba(124,58,237,0.2))",
+                  filter: "drop-shadow(0 0 60px rgba(0,212,255,0.25)) drop-shadow(0 0 120px rgba(69,212,232,0.2))",
                 }}
               >
                 <img
@@ -54,9 +54,9 @@ export default async function HomePage() {
               <div
                 className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] sm:mb-6 sm:py-2 sm:text-[11px]"
                 style={{
-                  background: "rgba(124,58,237,0.12)",
-                  border: "1px solid rgba(124,58,237,0.35)",
-                  color: "var(--neon-purple)",
+                  background: "rgba(69,212,232,0.12)",
+                  border: "1px solid rgba(69,212,232,0.35)",
+                  color: "var(--neon-blue)",
                 }}
               >
                 <Zap className="h-3 sm:h-3.5 w-3 sm:w-3.5" />
@@ -107,7 +107,7 @@ export default async function HomePage() {
         {/* ── FEATURE BANNERS ── */}
         <section className="shop-container grid gap-3 pb-4 sm:grid-cols-3">
           {[
-            { icon: Truck, title: "Livraison Rapide", text: "24-72h selon wilaya", color: "var(--neon-purple)" },
+            { icon: Truck, title: "Livraison Rapide", text: "24-72h selon wilaya", color: "var(--neon-blue)" },
             { icon: ShieldCheck, title: "100% COD", text: "Payez à la réception", color: "var(--neon-blue)" },
             { icon: Headphones, title: "Support Humain", text: "Confirmation avant envoi", color: "var(--neon-gold)" },
           ].map((item) => {
@@ -137,14 +137,14 @@ export default async function HomePage() {
               {/* Glow */}
               <div
                 className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full blur-[80px] opacity-50"
-                style={{ background: "radial-gradient(circle, rgba(124,58,237,0.5), transparent)" }}
+                style={{ background: "radial-gradient(circle, rgba(69,212,232,0.5), transparent)" }}
               />
 
               <div className="grid lg:grid-cols-[1fr_1.1fr]">
                 {/* Image */}
                 <div
                   className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]"
-                  style={{ background: "rgba(124,58,237,0.06)" }}
+                  style={{ background: "rgba(69,212,232,0.06)" }}
                 >
                   {getProductImage(featured) ? (
                     <img
@@ -235,7 +235,7 @@ export default async function HomePage() {
         <section className="shop-container pb-12 sm:pb-16">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="mb-2 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-purple)" }}>
+              <p className="mb-2 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
                 — Collection Exclusive
               </p>
               <h2 className="text-2xl font-black sm:text-3xl" style={{ color: "var(--fg)" }}>
@@ -246,9 +246,9 @@ export default async function HomePage() {
               href="/products"
               className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-sm font-black transition-all hover:scale-105 sm:self-auto"
               style={{
-                background: "rgba(124,58,237,0.1)",
+                background: "rgba(69,212,232,0.1)",
                 border: "1px solid var(--border-strong)",
-                color: "var(--neon-purple)",
+                color: "var(--neon-blue)",
               }}
             >
               Voir tout
@@ -283,14 +283,14 @@ export default async function HomePage() {
           <div
             className="relative overflow-hidden rounded-2xl p-7 sm:rounded-3xl sm:p-10"
             style={{
-              background: "linear-gradient(135deg, rgba(124,58,237,0.12), rgba(0,212,255,0.06))",
+              background: "linear-gradient(135deg, rgba(69,212,232,0.12), rgba(0,212,255,0.06))",
               border: "1px solid var(--border-strong)",
             }}
           >
             <div className="divider-neon mb-8" />
             <div className="grid grid-cols-1 gap-8 text-center sm:grid-cols-3">
               {[
-                { icon: Clock3, value: "24-72h", label: "Délai de livraison", color: "var(--neon-purple)" },
+                { icon: Clock3, value: "24-72h", label: "Délai de livraison", color: "var(--neon-blue)" },
                 { icon: BadgeCheck, value: "COD", label: "Paiement à réception", color: "var(--neon-blue)" },
                 { icon: ShieldCheck, value: "Algérie", label: "Livraison nationale", color: "var(--neon-gold)" },
               ].map((item) => {
@@ -314,3 +314,4 @@ export default async function HomePage() {
     </>
   );
 }
+

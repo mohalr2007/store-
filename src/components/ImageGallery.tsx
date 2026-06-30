@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Package, ZoomIn, X, Play } from "lucide-react";
@@ -57,8 +57,8 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
               onClick={() => setIsZoomed(true)}
               className="absolute right-3 bottom-3 flex h-9 w-9 items-center justify-center rounded-xl transition-all hover:scale-110 sm:h-10 sm:w-10"
               style={{
-                background: "rgba(124,58,237,0.7)",
-                border: "1px solid rgba(124,58,237,0.5)",
+                background: "rgba(69,212,232,0.7)",
+                border: "1px solid rgba(69,212,232,0.5)",
                 backdropFilter: "blur(8px)",
               }}
             >
@@ -67,7 +67,7 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
           </>
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-4 image-sheen">
-            <Package className="h-14 w-14 opacity-20" style={{ color: "var(--neon-purple)" }} />
+            <Package className="h-14 w-14 opacity-20" style={{ color: "var(--neon-blue)" }} />
             <span className="text-xs font-black uppercase tracking-[0.18em] opacity-25" style={{ color: "var(--fg)" }}>
               Al Cartel Shop
             </span>
@@ -79,7 +79,7 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
           <span
             className="badge absolute left-3 top-3"
             style={{
-              background: "rgba(124,58,237,0.75)",
+              background: "rgba(69,212,232,0.75)",
               color: "white",
               backdropFilter: "blur(8px)",
               padding: "0.3rem 0.75rem",
@@ -144,9 +144,9 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
               style={{
                 background: "var(--bg-card)",
                 border: activeIndex === idx
-                  ? "2px solid var(--neon-purple)"
+                  ? "2px solid var(--neon-blue)"
                   : "2px solid var(--border)",
-                boxShadow: activeIndex === idx ? "0 0 12px rgba(124,58,237,0.4)" : "none",
+                boxShadow: activeIndex === idx ? "0 0 12px rgba(69,212,232,0.4)" : "none",
               }}
             >
               <img src={img} alt="" className="h-full w-full object-cover" />
@@ -173,7 +173,7 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
             src={images[activeIndex]}
             alt={product.name}
             className="max-h-full max-w-full rounded-2xl object-contain"
-            style={{ boxShadow: "0 0 60px rgba(124,58,237,0.25)" }}
+            style={{ boxShadow: "0 0 60px rgba(69,212,232,0.25)" }}
             onClick={(e) => e.stopPropagation()}
           />
         </div>
@@ -181,3 +181,4 @@ export function ImageGallery({ product, activeImageUrl, colorSelected }: { produ
     </div>
   );
 }
+

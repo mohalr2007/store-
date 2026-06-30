@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight, Instagram, Mail, Phone } from "lucide-react";
 
 export function Footer() {
@@ -17,7 +17,7 @@ export function Footer() {
               </div>
               <div>
                 <p className="text-base font-black" style={{ color: "var(--fg)" }}>AL CARTEL</p>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--neon-purple)" }}>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
                   SHOP DZ
                 </p>
               </div>
@@ -29,7 +29,7 @@ export function Footer() {
 
             <div className="mt-5 flex gap-3">
               {[
-                { icon: Instagram, color: "var(--neon-purple)", bg: "rgba(124,58,237,0.1)", border: "rgba(124,58,237,0.3)" },
+                { icon: Instagram, color: "var(--neon-blue)", bg: "rgba(69,212,232,0.1)", border: "rgba(69,212,232,0.3)" },
                 { icon: Phone, color: "var(--neon-blue)", bg: "rgba(0,212,255,0.1)", border: "rgba(0,212,255,0.25)" },
                 { icon: Mail, color: "var(--neon-gold)", bg: "rgba(251,191,36,0.1)", border: "rgba(251,191,36,0.25)" },
               ].map((item, i) => {
@@ -50,7 +50,7 @@ export function Footer() {
 
           {/* Service */}
           <div>
-            <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-purple)" }}>
+            <p className="mb-5 text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--neon-blue)" }}>
               خدمات
             </p>
             <div className="space-y-3">
@@ -65,7 +65,7 @@ export function Footer() {
                   className="flex items-center gap-2 text-sm transition-colors hover:text-[var(--fg)]"
                   style={{ color: "var(--fg-muted)" }}
                 >
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 rotate-180" style={{ color: "var(--neon-purple)" }} />
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 rotate-180" style={{ color: "var(--neon-blue)" }} />
                   {link.label}
                 </Link>
               ))}
@@ -97,3 +97,4 @@ export function Footer() {
     </footer>
   );
 }
+

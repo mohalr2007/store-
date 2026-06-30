@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
@@ -53,7 +53,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
         <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 min-w-0">
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-            style={{ background: "rgba(124,58,237,0.08)", color: "var(--neon-purple)" }}
+            style={{ background: "rgba(69,212,232,0.08)", color: "var(--neon-blue)" }}
           >
             <SlidersHorizontal className="h-4 w-4" />
           </span>
@@ -66,9 +66,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 : "hover:scale-105"
             )}
             style={{
-              background: selectedCategory === "all" ? "linear-gradient(135deg, #7c3aed, #a855f7)" : "var(--bg-input)",
+              background: selectedCategory === "all" ? "linear-gradient(135deg, #1ab8ce, #45d4e8)" : "var(--bg-input)",
               color: selectedCategory === "all" ? "white" : "var(--fg-muted)",
-              boxShadow: selectedCategory === "all" ? "0 0 16px rgba(124,58,237,0.4)" : "none",
+              boxShadow: selectedCategory === "all" ? "0 0 16px rgba(69,212,232,0.4)" : "none",
             }}
           >
             الكل
@@ -84,9 +84,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
                   : "hover:scale-105"
               )}
               style={{
-                background: selectedCategory === category ? "linear-gradient(135deg, #7c3aed, #a855f7)" : "var(--bg-input)",
+                background: selectedCategory === category ? "linear-gradient(135deg, #1ab8ce, #45d4e8)" : "var(--bg-input)",
                 color: selectedCategory === category ? "white" : "var(--fg-muted)",
-                boxShadow: selectedCategory === category ? "0 0 16px rgba(124,58,237,0.4)" : "none",
+                boxShadow: selectedCategory === category ? "0 0 16px rgba(69,212,232,0.4)" : "none",
               }}
             >
               {category}
@@ -116,3 +116,4 @@ export function ProductGrid({ products }: { products: Product[] }) {
     </div>
   );
 }
+

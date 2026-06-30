@@ -109,11 +109,11 @@ export function DirectOrderForm({ product, selectedVariant }: { product: Product
     <form
       onSubmit={handleSubmit}
       className="mt-5 rounded-2xl p-5"
-      style={{ background: "rgba(124,58,237,0.06)", border: "1px solid var(--border-strong)" }}
+      style={{ background: "rgba(69,212,232,0.06)", border: "1px solid var(--border-strong)" }}
     >
       <p className="flex items-center gap-2 text-sm font-black" style={{ color: "var(--fg)" }}>
-        <PhoneCall className="h-4 w-4" style={{ color: "var(--neon-purple)" }} />
-        اطلب هذا المنتج
+        <PhoneCall className="h-4 w-4" style={{ color: "var(--neon-blue)" }} />
+        اطلب هذا ...
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <input name="fullName" value={form.fullName} onChange={handleChange} required placeholder="الاسم الكامل" className="shop-input text-right" />
@@ -140,10 +140,10 @@ export function DirectOrderForm({ product, selectedVariant }: { product: Product
       <input name="address" value={form.address} onChange={handleChange} required placeholder="العنوان الكامل" className="shop-input mt-3 text-right" />
 
       {/* Mode de livraison */}
-      <div className="mt-4 border-t border-dashed border-purple-200/50 pt-4">
+      <div className="mt-4 border-t border-dashed border-cyan-200/50 pt-4">
         <span className="text-xs font-bold text-gray-500 block mb-2 text-right">طريقة التوصيل:</span>
         <div className="grid gap-2 grid-cols-2" dir="rtl">
-          <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all text-xs font-bold ${form.delivery_mode === "home" ? "border-purple-600 bg-purple-50/50" : "border-gray-200 hover:bg-gray-50"}`}>
+          <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all text-xs font-bold ${form.delivery_mode === "home" ? "border-cyan-600 bg-cyan-50/50" : "border-gray-200 hover:bg-gray-50"}`}>
             <div className="flex items-center gap-2">
               <input
                 type="radio"
@@ -151,14 +151,14 @@ export function DirectOrderForm({ product, selectedVariant }: { product: Product
                 value="home"
                 checked={form.delivery_mode === "home"}
                 onChange={handleChange}
-                className="h-3.5 w-3.5 text-purple-600 focus:ring-purple-500"
+                className="h-3.5 w-3.5 text-cyan-600 focus:ring-cyan-500"
               />
               <span>توصيل للمنزل</span>
             </div>
-            {currentRate && <span className="text-[10px] text-purple-600">{currentRate.home_price > 0 ? `+${currentRate.home_price} د.ج` : "مجاني"}</span>}
+            {currentRate && <span className="text-[10px] text-cyan-600">{currentRate.home_price > 0 ? `+${currentRate.home_price} د.ج` : "مجاني"}</span>}
           </label>
           
-          <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all text-xs font-bold ${form.delivery_mode === "desk" ? "border-purple-600 bg-purple-50/50" : "border-gray-200 hover:bg-gray-50"}`}>
+          <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all text-xs font-bold ${form.delivery_mode === "desk" ? "border-cyan-600 bg-cyan-50/50" : "border-gray-200 hover:bg-gray-50"}`}>
             <div className="flex items-center gap-2">
               <input
                 type="radio"
@@ -166,17 +166,17 @@ export function DirectOrderForm({ product, selectedVariant }: { product: Product
                 value="desk"
                 checked={form.delivery_mode === "desk"}
                 onChange={handleChange}
-                className="h-3.5 w-3.5 text-purple-600 focus:ring-purple-500"
+                className="h-3.5 w-3.5 text-cyan-600 focus:ring-cyan-500"
               />
               <span>استلام من المكتب</span>
             </div>
-            {currentRate && <span className="text-[10px] text-purple-600">{currentRate.desk_price > 0 ? `+${currentRate.desk_price} د.ج` : "مجاني"}</span>}
+            {currentRate && <span className="text-[10px] text-cyan-600">{currentRate.desk_price > 0 ? `+${currentRate.desk_price} د.ج` : "مجاني"}</span>}
           </label>
         </div>
       </div>
 
       {/* Recapitulatif prix */}
-      <div className="mt-4 rounded-xl bg-purple-50/30 p-3 border border-purple-100 text-xs space-y-1.5 text-right" dir="rtl">
+      <div className="mt-4 rounded-xl bg-cyan-50/30 p-3 border border-cyan-100 text-xs space-y-1.5 text-right" dir="rtl">
         <div className="flex justify-between text-gray-500">
           <span>سعر المنتج ({form.quantity}):</span>
           <span className="font-semibold">{subtotal} د.ج</span>
@@ -185,7 +185,7 @@ export function DirectOrderForm({ product, selectedVariant }: { product: Product
           <span>سعر الشحن ({form.delivery_mode === "home" ? "المنزل" : "المكتب"}):</span>
           <span className="font-semibold">{shippingCost > 0 ? `${shippingCost} د.ج` : "مجاني"}</span>
         </div>
-        <div className="flex justify-between text-sm font-black border-t border-purple-100 pt-1.5 text-purple-900">
+        <div className="flex justify-between text-sm font-black border-t border-cyan-100 pt-1.5 text-cyan-900">
           <span>المجموع الإجمالي:</span>
           <span>{finalTotal} د.ج</span>
         </div>
@@ -203,7 +203,7 @@ export function DirectOrderForm({ product, selectedVariant }: { product: Product
         type="submit"
         disabled={loading || product.current_quantity <= 0}
         className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black text-white transition-all hover:scale-[1.01] disabled:opacity-50"
-        style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7)", boxShadow: loading ? "none" : "0 0 24px rgba(124,58,237,0.5)" }}
+        style={{ background: "linear-gradient(135deg, var(--brand-dark), var(--brand))", boxShadow: loading ? "none" : "0 0 24px var(--brand-glow)" }}
       >
         {loading ? <><svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> جاري الإرسال...</> : "تأكيد الطلب"}
       </button>

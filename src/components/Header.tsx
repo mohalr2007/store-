@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -54,7 +54,7 @@ export function Header() {
               </span>
               <span
                 className="block text-[9px] font-bold uppercase tracking-[0.2em]"
-                style={{ color: "var(--neon-purple)" }}
+                style={{ color: "var(--neon-blue)" }}
               >
                 SHOP DZ
               </span>
@@ -67,7 +67,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-xl px-4 py-2 text-sm font-semibold transition-all hover:bg-[rgba(124,58,237,0.1)]"
+                className="rounded-xl px-4 py-2 text-sm font-semibold transition-all hover:bg-[rgba(69,212,232,0.1)]"
                 style={{ color: "var(--fg-muted)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--fg-muted)")}
@@ -84,8 +84,8 @@ export function Header() {
               href="/cart"
               className="relative flex h-9 items-center gap-2 rounded-xl px-3 text-sm font-black text-white transition-all hover:scale-105"
               style={{
-                background: "linear-gradient(135deg, #7c3aed, #a855f7)",
-                boxShadow: "0 0 16px rgba(124,58,237,0.4)",
+                background: "linear-gradient(135deg, #1ab8ce, #45d4e8)",
+                boxShadow: "0 0 16px rgba(69,212,232,0.4)",
               }}
             >
               <ShoppingBag className="h-4 w-4" />
@@ -103,7 +103,7 @@ export function Header() {
               onClick={() => setMobileOpen((v) => !v)}
               className="flex h-9 w-9 items-center justify-center rounded-xl md:hidden"
               style={{
-                background: "rgba(124,58,237,0.1)",
+                background: "rgba(69,212,232,0.1)",
                 border: "1px solid var(--border)",
                 color: "var(--fg)",
               }}
@@ -128,7 +128,7 @@ export function Header() {
                   onClick={() => setMobileOpen(false)}
                   className="flex h-11 items-center rounded-xl px-4 text-sm font-semibold transition-all"
                   style={{ color: "var(--fg)", background: "transparent" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(124,58,237,0.08)")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(69,212,232,0.08)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   {link.label}
@@ -141,3 +141,4 @@ export function Header() {
     </>
   );
 }
+

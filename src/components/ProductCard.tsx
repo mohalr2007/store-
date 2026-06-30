@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowUpRight, Package, Play } from "lucide-react";
 import { formatCurrency, getProductImage } from "@/lib/utils";
 import type { Product } from "@/lib/types";
@@ -39,7 +39,7 @@ export function ProductCard({ product }: { product: Product }) {
           />
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 image-sheen">
-            <Package className="h-10 w-10 opacity-25" style={{ color: "var(--neon-purple)" }} />
+            <Package className="h-10 w-10 opacity-25" style={{ color: "var(--neon-blue)" }} />
             <span className="text-[10px] font-black uppercase tracking-[0.18em] opacity-30" style={{ color: "var(--fg)" }}>
               Al Cartel
             </span>
@@ -58,7 +58,7 @@ export function ProductCard({ product }: { product: Product }) {
             <span
               className="badge"
               style={{
-                background: "rgba(124,58,237,0.75)",
+                background: "rgba(69,212,232,0.75)",
                 color: "white",
                 backdropFilter: "blur(4px)",
               }}
@@ -97,8 +97,8 @@ export function ProductCard({ product }: { product: Product }) {
         <span
           className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-2 items-center justify-center rounded-xl text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-3 sm:right-3 sm:h-9 sm:w-9"
           style={{
-            background: "linear-gradient(135deg, #7c3aed, #00d4ff)",
-            boxShadow: "0 0 12px rgba(124,58,237,0.6)",
+            background: "linear-gradient(135deg, #1ab8ce, #00d4ff)",
+            boxShadow: "0 0 12px rgba(69,212,232,0.6)",
           }}
         >
           <ArrowUpRight className="h-4 w-4" />
@@ -134,3 +134,4 @@ export function ProductCard({ product }: { product: Product }) {
     </Link>
   );
 }
+
