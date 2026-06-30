@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
 import { Toaster } from "sonner";
@@ -21,15 +22,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <head>
-        <script
+      <head />
+      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+        {/* Inline theme script using next/script to avoid React script tag warning */}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html:
               "try{if(localStorage.getItem('ac-theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}",
           }}
         />
-      </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <KeyboardNavigation />
         <ThemeProvider>
           <CartProvider>{children}</CartProvider>
