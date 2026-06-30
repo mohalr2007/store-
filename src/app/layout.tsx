@@ -16,10 +16,13 @@ export const metadata: Metadata = {
   },
 };
 
+import { KeyboardNavigation } from "@/components/keyboard-navigation";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+        <KeyboardNavigation />
         <CartProvider>{children}</CartProvider>
         <Toaster position="bottom-center" richColors />
       </body>
