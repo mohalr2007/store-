@@ -294,7 +294,7 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
         province: customer.province,
         city: customer.city || "",
         address: customer.address,
-        product: items.map(i => `${i.quantity}x ${i.product.name}`).join(", "),
+        product: items.map(describeItem).join(", "),
         amount: total,
         status: "pending",
         date: new Date().toISOString().slice(0, 10),
