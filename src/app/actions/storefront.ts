@@ -208,7 +208,7 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
     let { data: order, error: orderError } = await insertOrderWithFallback(supabase, {
       ...orderPayload,
       shipping_cost: shippingCost,
-      notes: orderNotes || null,
+      customer_note: orderNotes || null,
     });
 
     if (orderError) throw orderError;
@@ -313,7 +313,7 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
 async function insertOrderWithFallback(supabase: ReturnType<typeof createAdminClient>, payload: Record<string, any>) {
   const mutablePayload = { ...payload };
   let lastError: any = null;
-  const removableColumns = ["notes", "shipping_cost", "delivery_mode", "total_amount"];
+  const removableColumns = ["customer_note", "shipping_cost", "delivery_mode", "total_amount"];
 
   for (let attempt = 0; attempt < removableColumns.length + 1; attempt++) {
     const result = await supabase.from("orders").insert(mutablePayload).select("id").single();
