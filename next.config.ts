@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: storeRoot,
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "500mb",
+    },
+  },
 };
 
 export default nextConfig;
