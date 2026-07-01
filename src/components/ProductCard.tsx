@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { ArrowUpRight, Package, Play } from "lucide-react";
 import { formatCurrency, getProductImage } from "@/lib/utils";
 import type { Product } from "@/lib/types";
@@ -80,6 +80,14 @@ export function ProductCard({ product }: { product: Product }) {
               style={{ background: "rgba(244,63,94,0.85)", color: "white" }}
             >
               نفذ
+            </span>
+          )}
+          {product.is_free_shipping && (
+            <span
+              className="badge"
+              style={{ background: "rgba(16,185,129,0.9)", color: "white" }}
+            >
+              توصيل مجاني 🚚
             </span>
           )}
           {has360 && (
