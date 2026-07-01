@@ -13,9 +13,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
   const sizeVariants = product.variants?.filter((v) => v.attribute === "size") || [];
 
   const [selectedColor, setSelectedColor] = useState<ProductVariant | null>(null);
-  const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(
-    sizeVariants.length > 0 ? sizeVariants[0] : null
-  );
+  const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(null);
 
   const activeImageUrl = selectedColor?.custom_name?.startsWith("http")
     ? selectedColor.custom_name
@@ -36,6 +34,17 @@ export function ProductPageLayout({ product }: { product: Product }) {
     selectedColor ? `اللون: ${selectedColor.value}` : null,
     selectedSize ? `المقاس: ${selectedSize.value}` : null,
   ].filter(Boolean).join(" / ");
+
+  const isColorValid = colorVariants.length === 0 || selectedColor !== null;
+  const isSizeValid = sizeVariants.length === 0 || selectedSize !== null;
+  const isSelectionValid = isColorValid && isSizeValid;
+  const missingSelectionMessage = !isColorValid && !isSizeValid
+    ? "يرجى اختيار اللون والمقاس أولاً."
+    : !isColorValid
+      ? "يرجى اختيار اللون أولاً."
+      : !isSizeValid
+        ? "يرجى اختيار المقاس أولاً."
+        : "";
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
@@ -193,7 +202,13 @@ export function ProductPageLayout({ product }: { product: Product }) {
           )}
 
           <div className="mt-7">
-            <AddToCartButton product={product} selectedVariant={selectedStockVariant} effectiveStock={effectiveStock} />
+            <AddToCartButton 
+              product={product} 
+              selectedVariant={selectedStockVariant} 
+              effectiveStock={effectiveStock} 
+              isSelectionValid={isSelectionValid}
+              missingSelectionMessage={missingSelectionMessage}
+            />
           </div>
 
           <div id="direct-order" className="mt-4">
@@ -202,6 +217,8 @@ export function ProductPageLayout({ product }: { product: Product }) {
               selectedVariant={selectedStockVariant}
               selectedVariantLabel={currentVariantLabel}
               effectiveStock={effectiveStock}
+              isSelectionValid={isSelectionValid}
+              missingSelectionMessage={missingSelectionMessage}
             />
           </div>
 

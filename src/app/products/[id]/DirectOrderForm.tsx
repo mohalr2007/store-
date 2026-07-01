@@ -31,6 +31,8 @@ type Props = {
   selectedVariant?: ProductVariant | null;
   selectedVariantLabel?: string;
   effectiveStock?: number;
+  isSelectionValid?: boolean;
+  missingSelectionMessage?: string;
 };
 
 export function DirectOrderForm({
@@ -38,6 +40,8 @@ export function DirectOrderForm({
   selectedVariant,
   selectedVariantLabel,
   effectiveStock,
+  isSelectionValid = true,
+  missingSelectionMessage = "",
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -69,9 +73,11 @@ export function DirectOrderForm({
   }, []);
 
   const currentRate = rates.find((r) => r.province === form.province);
-  const shippingCost = currentRate
-    ? (form.delivery_mode === "home" ? currentRate.home_price : currentRate.desk_price)
-    : 0;
+  const shippingCost = product.is_free_shipping 
+    ? 0 
+    : currentRate
+      ? (form.delivery_mode === "home" ? currentRate.home_price : currentRate.desk_price)
+      : 0;
   const productPrice = Number(product.selling_price || 0);
   const subtotal = productPrice * form.quantity;
   const finalTotal = subtotal + shippingCost;
@@ -83,6 +89,11 @@ export function DirectOrderForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!isSelectionValid) {
+      setError(missingSelectionMessage);
+      return;
+    }
 
     if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim()) {
       setError("Veuillez remplir le nom, le téléphone et l'adresse.");
@@ -214,6 +225,7 @@ export function DirectOrderForm({
         />
       </Field>
 
+      {!product.is_free_shipping && (
       <div className="mt-5 rounded-[1.35rem] border border-dashed border-[rgba(69,212,232,0.25)] bg-[rgba(69,212,232,0.035)] p-4 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <span className="text-sm font-black uppercase tracking-[0.14em] text-[var(--fg)]">
@@ -242,12 +254,13 @@ export function DirectOrderForm({
           />
         </div>
       </div>
+      )}
 
       <div className="mt-5 rounded-[1.35rem] border border-[rgba(69,212,232,0.16)] bg-[var(--soft-panel-bg)] p-4 sm:p-5">
         <div className="space-y-2.5 text-sm">
           <Row label={`سعر المنتج (${form.quantity})`} value={`${subtotal} د.ج`} />
           <Row
-            label={`سعر الشحن (${form.delivery_mode === "home" ? "المنزل" : "المكتب"})`}
+            label={product.is_free_shipping ? "سعر الشحن (توصيل مجاني 🚚)" : `سعر الشحن (${form.delivery_mode === "home" ? "المنزل" : "المكتب"})`}
             value={shippingCost > 0 ? `${shippingCost} د.ج` : "مجاني"}
           />
         </div>

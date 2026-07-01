@@ -9,10 +9,14 @@ export function AddToCartButton({
   product,
   selectedVariant,
   effectiveStock,
+  isSelectionValid = true,
+  missingSelectionMessage = "",
 }: {
   product: Product;
   selectedVariant?: ProductVariant | null;
   effectiveStock?: number;
+  isSelectionValid?: boolean;
+  missingSelectionMessage?: string;
 }) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
@@ -21,6 +25,10 @@ export function AddToCartButton({
   const isOutOfStock = stockToCheck <= 0;
 
   const handleAdd = () => {
+    if (!isSelectionValid) {
+      alert(missingSelectionMessage);
+      return;
+    }
     addItem(product, 1, selectedVariant || undefined);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
