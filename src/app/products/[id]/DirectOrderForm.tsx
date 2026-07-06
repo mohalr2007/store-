@@ -169,8 +169,7 @@ export function DirectOrderForm({
       onSubmit={handleSubmit}
       className="mt-5 w-full rounded-[1.75rem] border border-[rgba(69,212,232,0.18)] bg-[var(--bg-card)] p-6 shadow-sm sm:p-7 lg:p-8"
       style={{
-        boxShadow: "var(--shadow)",
-        background: "var(--order-form-bg)",
+        boxShadow: "var(--shadow)"
       }}
     >
       <div className="min-w-0">
@@ -232,8 +231,8 @@ export function DirectOrderForm({
             </button>
             
             {isProvinceOpen && (
-              <div className="absolute top-full right-0 z-50 mt-2 w-full overflow-hidden rounded-[1.25rem] border border-[rgba(69,212,232,0.18)] bg-[var(--bg-card)] shadow-xl" style={{ background: "var(--order-form-bg)" }}>
-                <div className="border-b border-[rgba(69,212,232,0.18)] p-2.5">
+              <div className="absolute top-full right-0 z-50 mt-2 w-full overflow-hidden rounded-[1.25rem] border border-[rgba(69,212,232,0.18)] bg-[var(--bg-card)] shadow-2xl">
+                <div className="border-b border-[rgba(69,212,232,0.18)] p-2.5 bg-[var(--bg-card)]">
                   <div className="relative">
                     <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--fg-subtle)]" />
                     <input
