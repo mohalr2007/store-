@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckCircle2, Hash, MapPin, PhoneCall, Truck, User } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { CheckCircle2, Hash, MapPin, PhoneCall, Truck, User, ChevronDown, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Product, ProductVariant } from "@/lib/types";
 import { submitStoreOrderAction, getStoreShippingRatesAction } from "@/app/actions/storefront";
@@ -26,6 +26,24 @@ const WILAYAS = [
   "El Meniaa"
 ];
 
+const WILAYAS_ARABIC: Record<string, string> = {
+  "Adrar": "أدرار", "Chlef": "الشلف", "Laghouat": "الأغواط", "Oum El Bouaghi": "أم البواقي",
+  "Batna": "باتنة", "Bejaia": "بجاية", "Biskra": "بسكرة", "Bechar": "بشار",
+  "Blida": "البليدة", "Bouira": "البويرة", "Tamanrasset": "تمنراست", "Tebessa": "تبسة",
+  "Tlemcen": "تلمسان", "Tiaret": "تيارت", "Tizi Ouzou": "تيزي وزو", "Alger": "الجزائر",
+  "Djelfa": "الجلفة", "Jijel": "جيجل", "Setif": "سطيف", "Saida": "سعيدة",
+  "Skikda": "سكيكدة", "Sidi Bel Abbes": "سيدي بلعباس", "Annaba": "عنابة", "Guelma": "قالمة",
+  "Constantine": "قسنطينة", "Medea": "المدية", "Mostaganem": "مستغانم", "M'sila": "المسيلة",
+  "Mascara": "معسكر", "Ouargla": "ورقلة", "Oran": "وهران", "El Bayadh": "البيض",
+  "Illizi": "إليزي", "Bordj Bou Arreridj": "برج بوعريريج", "Boumerdes": "بومرداس", "El Tarf": "الطارف",
+  "Tindouf": "تندوف", "Tissemsilt": "تيسمسيلت", "El Oued": "الوادي", "Khenchela": "خنشلة",
+  "Souk Ahras": "سوق أهراس", "Tipaza": "تيبازة", "Mila": "ميلة", "Ain Defla": "عين الدفلى",
+  "Naama": "النعامة", "Ain Temouchent": "عين تموشنت", "Ghardaia": "غرداية", "Relizane": "غليزان",
+  "Timimoun": "تيميمون", "Bordj Badji Mokhtar": "برج باجي مختار", "Ouled Djellal": "أولاد جلال",
+  "Beni Abbes": "بني عباس", "In Salah": "عين صالح", "In Guezzam": "عين قزام",
+  "Touggourt": "تقرت", "Djanet": "جانت", "El M'Ghair": "المغير", "El Meniaa": "المنيعة"
+};
+
 type Props = {
   product: Product;
   selectedVariant?: ProductVariant | null;
@@ -48,6 +66,12 @@ export function DirectOrderForm({
   const [error, setError] = useState("");
   const [rates, setRates] = useState<ShippingRate[]>([]);
   const [ratesLoading, setRatesLoading] = useState(true);
+  
+  // Custom select state
+  const [isProvinceOpen, setIsProvinceOpen] = useState(false);
+  const [provinceSearch, setProvinceSearch] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -56,6 +80,16 @@ export function DirectOrderForm({
     quantity: 1,
     delivery_mode: "home",
   });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsProvinceOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchRates = async () => {
@@ -177,29 +211,79 @@ export function DirectOrderForm({
         </Field>
 
         <Field label="الولاية" icon={MapPin}>
-          <select
-            name="province"
-            value={form.province}
-            onChange={handleChange}
-            className="shop-input h-14 text-[15px] font-medium text-right"
-            disabled={ratesLoading}
-          >
-            {ratesLoading ? (
-              <option>جاري التحميل...</option>
-            ) : rates.length > 0 ? (
-              rates.map((rate) => (
-                <option key={rate.province} value={rate.province}>
-                  {rate.province}
-                </option>
-              ))
-            ) : (
-              WILAYAS.map((wilaya) => (
-                <option key={wilaya} value={wilaya}>
-                  {wilaya}
-                </option>
-              ))
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => !ratesLoading && setIsProvinceOpen(!isProvinceOpen)}
+              className="shop-input flex h-14 w-full items-center justify-between bg-transparent px-4 text-[15px] font-medium disabled:opacity-50"
+              disabled={ratesLoading}
+              dir="rtl"
+            >
+              <div className="flex items-center gap-2">
+                <span className={!form.province ? "text-[var(--fg-subtle)]" : "text-[var(--fg)]"}>
+                  {ratesLoading 
+                    ? "جاري التحميل..." 
+                    : form.province 
+                      ? WILAYAS_ARABIC[form.province] || form.province 
+                      : "اختر الولاية"}
+                </span>
+              </div>
+              <ChevronDown className={`h-4 w-4 text-[var(--fg-subtle)] transition-transform ${isProvinceOpen ? "rotate-180" : ""}`} />
+            </button>
+            
+            {isProvinceOpen && (
+              <div className="absolute top-full right-0 z-50 mt-2 w-full overflow-hidden rounded-[1.25rem] border border-[rgba(69,212,232,0.18)] bg-[var(--bg-card)] shadow-xl" style={{ background: "var(--order-form-bg)" }}>
+                <div className="border-b border-[rgba(69,212,232,0.18)] p-2.5">
+                  <div className="relative">
+                    <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--fg-subtle)]" />
+                    <input
+                      type="text"
+                      placeholder="ابحث عن ولاية..."
+                      value={provinceSearch}
+                      onChange={(e) => setProvinceSearch(e.target.value)}
+                      className="w-full rounded-xl bg-[rgba(69,212,232,0.05)] py-3 pl-3 pr-10 text-sm text-right text-[var(--fg)] placeholder:text-[var(--fg-subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--brand)]"
+                      onClick={(e) => e.stopPropagation()}
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+                <div className="max-h-[240px] overflow-y-auto p-1.5 custom-scrollbar">
+                  {(() => {
+                    const availableWilayas = rates.length > 0 ? rates.map(r => r.province) : WILAYAS;
+                    const filtered = availableWilayas.filter(w => {
+                      const searchLower = provinceSearch.toLowerCase();
+                      const arabicName = WILAYAS_ARABIC[w] || "";
+                      return w.toLowerCase().includes(searchLower) || arabicName.includes(searchLower);
+                    });
+                    
+                    if (filtered.length === 0) {
+                      return <div className="p-4 text-center text-sm font-medium text-[var(--fg-subtle)]">لا توجد نتائج</div>;
+                    }
+                    
+                    return filtered.map((wilaya) => (
+                      <button
+                        key={wilaya}
+                        type="button"
+                        onClick={() => {
+                          setForm(prev => ({ ...prev, province: wilaya }));
+                          setIsProvinceOpen(false);
+                          setProvinceSearch("");
+                        }}
+                        className={`mb-0.5 w-full rounded-xl px-4 py-3 text-right text-[15px] font-medium transition-all ${
+                          form.province === wilaya 
+                            ? "bg-[var(--brand)] text-white shadow-md shadow-[var(--brand)]/20" 
+                            : "text-[var(--fg)] hover:bg-[rgba(69,212,232,0.08)]"
+                        }`}
+                        dir="rtl"
+                      >
+                        {WILAYAS_ARABIC[wilaya] || wilaya}
+                      </button>
+                    ));
+                  })()}
+                </div>
+              </div>
             )}
-          </select>
+          </div>
         </Field>
 
         <Field label="الكمية" icon={Hash}>
