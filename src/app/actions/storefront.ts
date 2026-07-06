@@ -295,7 +295,9 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
         city: customer.city || "",
         address: customer.address,
         product: items.map(describeItem).join(", "),
-        amount: total,
+        amount: total, // Montant produit uniquement
+        shippingCost: shippingCost,
+        totalAmount: payableTotal,
         status: "pending",
         date: new Date().toISOString().slice(0, 10),
         source: "Store"
