@@ -111,7 +111,7 @@ export default function CheckoutPage() {
 
       clearCart();
       toast.success("تم تأكيد الطلب بنجاح!");
-      router.push(`/order-confirmation?order=${result.orderNumber}`);
+      router.push(`/order-confirmation?order=${result.orderNumber}&value=${finalTotal}`);
     } catch (err: any) {
       toast.error(err.message || "حدث خطأ.");
       setError(err.message || "حدث خطأ.");

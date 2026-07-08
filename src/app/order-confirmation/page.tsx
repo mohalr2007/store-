@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle, CreditCard, Package, Phone, Truck } from "lucide-react";
@@ -10,6 +10,18 @@ import { Footer } from "@/components/Footer";
 function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("order");
+  const value = searchParams.get("value");
+
+  useEffect(() => {
+    if (orderNumber && typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "Purchase", {
+        value: value ? Number(value) : 0,
+        currency: "DZD",
+        content_name: "Store Order",
+        content_ids: [orderNumber],
+      });
+    }
+  }, [orderNumber, value]);
 
   return (
     <>

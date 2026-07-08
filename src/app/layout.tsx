@@ -6,6 +6,7 @@ import { CartProvider } from "@/components/CartProvider";
 import { Toaster } from "sonner";
 import { KeyboardNavigation } from "@/components/keyboard-navigation";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { MetaPixel } from "@/components/MetaPixel";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "try{if(localStorage.getItem('ac-theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}",
           }}
         />
+        <MetaPixel />
         <KeyboardNavigation />
         <ThemeProvider>
           <CartProvider>{children}</CartProvider>

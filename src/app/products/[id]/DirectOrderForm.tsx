@@ -154,7 +154,7 @@ export function DirectOrderForm({
 
       if (!result.success) throw new Error(result.error);
 
-      router.push(`/order-confirmation?order=${result.orderNumber}`);
+      router.push(`/order-confirmation?order=${result.orderNumber}&value=${finalTotal}`);
     } catch (err: any) {
       setError(err.message || "Impossible de confirmer la commande.");
     } finally {
