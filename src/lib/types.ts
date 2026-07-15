@@ -12,6 +12,7 @@ export interface Product {
   current_quantity: number;
   low_stock_threshold: number;
   selling_price: number;
+  original_price?: number | null;
   is_active: boolean;
   is_free_shipping?: boolean;
   created_at: string;

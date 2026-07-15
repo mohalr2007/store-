@@ -161,22 +161,34 @@ export function ProductPageLayout({ product }: { product: Product }) {
 
           <div className="divider-neon my-5" />
 
-          <div className="flex flex-wrap items-center gap-4">
-            <p className="text-4xl font-black gradient-text-gold sm:text-5xl">
-              {formatCurrency(product.selling_price)}
-            </p>
-            <span
-              className="badge"
-              style={{
-                background: "rgba(16,185,129,0.08)",
-                border: "1px solid rgba(16,185,129,0.22)",
-                color: "var(--neon-green)",
-                padding: "0.4rem 0.9rem",
-                fontSize: "0.7rem",
-              }}
-            >
-              متوفر في المخزون
-            </span>
+          <div className="flex flex-col gap-1">
+            {product.original_price && product.original_price > product.selling_price && (
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-bold text-[var(--fg-muted)] line-through">
+                  {formatCurrency(product.original_price)}
+                </span>
+                <span className="rounded-lg bg-[rgba(244,63,94,0.15)] px-2.5 py-1 text-sm font-black text-[var(--neon-red)] border border-[rgba(244,63,94,0.3)]">
+                  تخفيض -{Math.round(((product.original_price - product.selling_price) / product.original_price) * 100)}%
+                </span>
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-4">
+              <p className="text-4xl font-black gradient-text-gold sm:text-5xl">
+                {formatCurrency(product.selling_price)}
+              </p>
+              <span
+                className="badge"
+                style={{
+                  background: "rgba(16,185,129,0.08)",
+                  border: "1px solid rgba(16,185,129,0.22)",
+                  color: "var(--neon-green)",
+                  padding: "0.4rem 0.9rem",
+                  fontSize: "0.7rem",
+                }}
+              >
+                متوفر في المخزون
+              </span>
+            </div>
           </div>
 
           <div className="mt-6">

@@ -122,21 +122,33 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </h3>
 
-        <div className="mt-3 flex items-end justify-between gap-2">
-          <p className="text-base font-black gradient-text-gold sm:text-lg">
-            {formatCurrency(product.selling_price)}
-          </p>
-          <span
-            className="badge shrink-0"
-            style={{
-              background: "rgba(16,185,129,0.1)",
-              border: "1px solid rgba(16,185,129,0.3)",
-              color: "var(--neon-green)",
-              padding: "0.25rem 0.6rem",
-            }}
-          >
-            الدفع عند الاستلام
-          </span>
+        <div className="mt-3 flex flex-col gap-1">
+          {product.original_price && product.original_price > product.selling_price && (
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-[var(--fg-muted)] line-through">
+                {formatCurrency(product.original_price)}
+              </span>
+              <span className="rounded bg-[rgba(244,63,94,0.15)] px-1.5 py-0.5 text-[10px] font-black text-[var(--neon-red)] border border-[rgba(244,63,94,0.3)]">
+                -{Math.round(((product.original_price - product.selling_price) / product.original_price) * 100)}%
+              </span>
+            </div>
+          )}
+          <div className="flex items-end justify-between gap-2">
+            <p className="text-base font-black gradient-text-gold sm:text-lg">
+              {formatCurrency(product.selling_price)}
+            </p>
+            <span
+              className="badge shrink-0"
+              style={{
+                background: "rgba(16,185,129,0.1)",
+                border: "1px solid rgba(16,185,129,0.3)",
+                color: "var(--neon-green)",
+                padding: "0.25rem 0.6rem",
+              }}
+            >
+              الدفع عند الاستلام
+            </span>
+          </div>
         </div>
       </div>
     </Link>
