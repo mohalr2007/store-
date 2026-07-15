@@ -58,7 +58,7 @@ export async function listPublicProductsAction(limit?: number) {
       })),
     };
   } catch (error: any) {
-    return { success: false, products: [], error: error.message || "Impossible de charger les produits." };
+    return { success: false, products: [] as any[], error: error.message || "Impossible de charger les produits." };
   }
 }
 
@@ -89,7 +89,7 @@ export async function getPublicProductAction(id: string) {
       },
     };
   } catch (error: any) {
-    return { success: false, product: null, error: error.message || "Produit introuvable." };
+    return { success: false, product: null as any, error: error.message || "Produit introuvable." };
   }
 }
 
@@ -109,9 +109,17 @@ export async function getStoreShippingRatesAction() {
       orderBy: { province: "asc" },
     });
 
-    return { success: true, rates };
+    // Convert Prisma Decimal to number for the frontend
+    const converted = rates.map((r) => ({
+      province: r.province,
+      home_price: Number(r.home_price ?? 0),
+      desk_price: Number(r.desk_price ?? 0),
+      is_active: r.is_active ?? true,
+    }));
+
+    return { success: true, rates: converted };
   } catch (error: any) {
-    return { success: false, rates: [], error: error.message || "Impossible de charger les tarifs." };
+    return { success: false, rates: [] as any[], error: error.message || "Impossible de charger les tarifs." };
   }
 }
 

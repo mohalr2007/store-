@@ -9,15 +9,17 @@ export interface Product {
   category: string | null;
   video_url?: string | null;
   images?: string[] | null;
-  current_quantity: number;
-  low_stock_threshold: number;
-  selling_price: number;
+  current_quantity: number | null;
+  low_stock_threshold: number | null;
+  selling_price: number | null;
   original_price?: number | null;
-  show_discount: boolean;
-  is_active: boolean;
-  is_free_shipping?: boolean;
-  created_at: string;
-  updated_at: string;
+  show_discount: boolean | null;
+  is_active: boolean | null;
+  is_free_shipping?: boolean | null;
+  last_purchase_cost?: number | null;
+  created_at: string | Date | null;
+  updated_at: string | Date | null;
+  deleted_at?: string | Date | null;
   variants?: ProductVariant[];
 }
 
@@ -28,9 +30,12 @@ export interface ProductVariant {
   attribute: string;
   custom_name: string | null;
   value: string;
-  quantity: number;
-  sort_order: number;
-  created_at: string;
+  quantity: number | null;
+  sort_order: number | null;
+  image_url?: string | null;
+  deleted_at?: Date | null;
+  created_at: string | Date | null;
+  updated_at?: Date | null;
 }
 
 export interface Customer {
