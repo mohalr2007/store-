@@ -46,6 +46,71 @@ export function ProductPageLayout({ product }: { product: Product }) {
         ? "يرجى اختيار المقاس أولاً."
         : "";
 
+  const variantSelectorBlock = (colorVariants.length > 0 || sizeVariants.length > 0) ? (
+    <div className="space-y-4">
+      {colorVariants.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--fg-muted)]">اللون</p>
+          <div className="flex flex-wrap gap-2.5">
+            {colorVariants.map((variant) => {
+              const isSelected = selectedColor?.id === variant.id;
+              return (
+                <button
+                  key={variant.id}
+                  onClick={() => setSelectedColor(isSelected ? null : variant)}
+                  className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
+                  style={{
+                    borderColor: isSelected ? "rgba(69,212,232,0.35)" : variant.quantity <= 0 ? "rgba(244,63,94,0.28)" : "var(--border)",
+                    background: isSelected ? "rgba(69,212,232,0.12)" : variant.quantity <= 0 ? "rgba(244,63,94,0.04)" : "var(--bg-card)",
+                    color: variant.quantity <= 0 ? "var(--neon-red)" : "var(--fg)",
+                    boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
+                    opacity: variant.quantity <= 0 ? 0.6 : 1,
+                  }}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{
+                        background: isSelected ? "var(--brand)" : "rgba(16,41,47,0.16)",
+                      }}
+                    />
+                    {variant.value}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {sizeVariants.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--fg-muted)]">المقاس</p>
+          <div className="flex flex-wrap gap-2.5">
+            {sizeVariants.map((variant) => {
+              const isSelected = selectedSize?.id === variant.id;
+              return (
+                <button
+                  key={variant.id}
+                  onClick={() => setSelectedSize(isSelected ? null : variant)}
+                  className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
+                  style={{
+                    borderColor: isSelected ? "rgba(69,212,232,0.35)" : "var(--border)",
+                    background: isSelected ? "rgba(69,212,232,0.12)" : "var(--bg-card)",
+                    color: "var(--fg)",
+                    boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
+                  }}
+                >
+                  {variant.value}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  ) : null;
+
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
       <section className="min-w-0">
@@ -130,71 +195,6 @@ export function ProductPageLayout({ product }: { product: Product }) {
             )}
           </div>
 
-          {(colorVariants.length > 0 || sizeVariants.length > 0) && (
-            <div className="mt-6 space-y-4">
-              {colorVariants.length > 0 && (
-                <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--fg-muted)]">اللون</p>
-                  <div className="flex flex-wrap gap-2.5">
-                    {colorVariants.map((variant) => {
-                      const isSelected = selectedColor?.id === variant.id;
-                      return (
-                        <button
-                          key={variant.id}
-                          onClick={() => setSelectedColor(isSelected ? null : variant)}
-                          className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
-                          style={{
-                            borderColor: isSelected ? "rgba(69,212,232,0.35)" : variant.quantity <= 0 ? "rgba(244,63,94,0.28)" : "var(--border)",
-                            background: isSelected ? "rgba(69,212,232,0.12)" : variant.quantity <= 0 ? "rgba(244,63,94,0.04)" : "var(--bg-card)",
-                            color: variant.quantity <= 0 ? "var(--neon-red)" : "var(--fg)",
-                            boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
-                            opacity: variant.quantity <= 0 ? 0.6 : 1,
-                          }}
-                        >
-                          <span className="inline-flex items-center gap-2">
-                            <span
-                              className="h-2.5 w-2.5 rounded-full"
-                              style={{
-                                background: isSelected ? "var(--brand)" : "rgba(16,41,47,0.16)",
-                              }}
-                            />
-                            {variant.value}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {sizeVariants.length > 0 && (
-                <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--fg-muted)]">المقاس</p>
-                  <div className="flex flex-wrap gap-2.5">
-                    {sizeVariants.map((variant) => {
-                      const isSelected = selectedSize?.id === variant.id;
-                      return (
-                        <button
-                          key={variant.id}
-                          onClick={() => setSelectedSize(isSelected ? null : variant)}
-                          className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
-                          style={{
-                            borderColor: isSelected ? "rgba(69,212,232,0.35)" : "var(--border)",
-                            background: isSelected ? "rgba(69,212,232,0.12)" : "var(--bg-card)",
-                            color: "var(--fg)",
-                            boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
-                          }}
-                        >
-                          {variant.value}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
           {product.description && (
             <p className="mt-5 text-sm leading-7" style={{ color: "var(--fg-muted)" }}>
               {product.description}
@@ -219,6 +219,7 @@ export function ProductPageLayout({ product }: { product: Product }) {
               effectiveStock={effectiveStock}
               isSelectionValid={isSelectionValid}
               missingSelectionMessage={missingSelectionMessage}
+              variantSelector={variantSelectorBlock}
             />
           </div>
 

@@ -60,7 +60,8 @@ export function DirectOrderForm({
   effectiveStock,
   isSelectionValid = true,
   missingSelectionMessage = "",
-}: Props) {
+  variantSelector,
+}: Props & { variantSelector?: React.ReactNode }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -184,6 +185,12 @@ export function DirectOrderForm({
           املأ المعلومات التالية وسنؤكد الطلب بسرعة قبل الشحن.
         </p>
       </div>
+
+      {variantSelector && (
+        <div className="mt-6 border-b border-[var(--border)] pb-6">
+          {variantSelector}
+        </div>
+      )}
 
       <div className="mt-6 grid gap-3.5 sm:grid-cols-2">
         <Field label="الاسم الكامل" icon={User}>
