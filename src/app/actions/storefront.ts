@@ -148,19 +148,11 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
           return { success: false, error: `النسخة غير موجودة للمنتج ${dbProduct.name}.` };
         }
 
-        if (Number(dbVariant.quantity || 0) < item.quantity) {
-          return {
-            success: false,
-            error: `المخزون غير كافٍ للمنتج ${dbProduct.name} (${dbVariant.value}). المتبقي: ${dbVariant.quantity}`,
-          };
-        }
-
+        // Removed stock limit check for variants so customers can order any quantity.
         continue;
       }
       
-      if (dbProduct.current_quantity < item.quantity) {
-        return { success: false, error: `المخزون غير كافٍ للمنتج ${dbProduct.name} (المتبقي: ${dbProduct.current_quantity})` };
-      }
+      // Removed stock limit check for products so customers can order any quantity.
     }
 
     const total = items.reduce(

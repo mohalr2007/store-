@@ -379,7 +379,7 @@ export function DirectOrderForm({
 
       <button
         type="submit"
-        disabled={loading || !hasStock}
+        disabled={loading}
         className="mt-5 flex h-14 w-full items-center justify-center gap-2 rounded-[1.25rem] text-base font-black text-white transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           background: "linear-gradient(135deg, var(--brand-dark), var(--brand))",

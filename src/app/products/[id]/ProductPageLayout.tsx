@@ -60,11 +60,10 @@ export function ProductPageLayout({ product }: { product: Product }) {
                   onClick={() => setSelectedColor(isSelected ? null : variant)}
                   className="rounded-full border px-4 py-2.5 text-sm font-semibold transition-all"
                   style={{
-                    borderColor: isSelected ? "rgba(69,212,232,0.35)" : variant.quantity <= 0 ? "rgba(244,63,94,0.28)" : "var(--border)",
-                    background: isSelected ? "rgba(69,212,232,0.12)" : variant.quantity <= 0 ? "rgba(244,63,94,0.04)" : "var(--bg-card)",
-                    color: variant.quantity <= 0 ? "var(--neon-red)" : "var(--fg)",
+                    borderColor: isSelected ? "rgba(69,212,232,0.35)" : "var(--border)",
+                    background: isSelected ? "rgba(69,212,232,0.12)" : "var(--bg-card)",
+                    color: "var(--fg)",
                     boxShadow: isSelected ? "0 0 0 1px rgba(69,212,232,0.10)" : "none",
-                    opacity: variant.quantity <= 0 ? 0.6 : 1,
                   }}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -166,33 +165,18 @@ export function ProductPageLayout({ product }: { product: Product }) {
             <p className="text-4xl font-black gradient-text-gold sm:text-5xl">
               {formatCurrency(product.selling_price)}
             </p>
-            {effectiveStock > 0 ? (
-              <span
-                className="badge"
-                style={{
-                  background: "rgba(16,185,129,0.08)",
-                  border: "1px solid rgba(16,185,129,0.22)",
-                  color: "var(--neon-green)",
-                  padding: "0.4rem 0.9rem",
-                  fontSize: "0.7rem",
-                }}
-              >
-                متوفر في المخزون
-              </span>
-            ) : (
-              <span
-                className="badge"
-                style={{
-                  background: "rgba(244,63,94,0.08)",
-                  border: "1px solid rgba(244,63,94,0.22)",
-                  color: "var(--neon-red)",
-                  padding: "0.4rem 0.9rem",
-                  fontSize: "0.7rem",
-                }}
-              >
-                نفد من المخزون
-              </span>
-            )}
+            <span
+              className="badge"
+              style={{
+                background: "rgba(16,185,129,0.08)",
+                border: "1px solid rgba(16,185,129,0.22)",
+                color: "var(--neon-green)",
+                padding: "0.4rem 0.9rem",
+                fontSize: "0.7rem",
+              }}
+            >
+              متوفر في المخزون
+            </span>
           </div>
 
           <div className="mt-6">
