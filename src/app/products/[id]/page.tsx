@@ -6,9 +6,7 @@ import { getPublicProductAction } from "@/app/actions/storefront";
 import { ProductPageLayout } from "./ProductPageLayout";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-export const revalidate = 0;
+export const revalidate = 60; // Cache de 60 secondes pour économiser les quotas Vercel
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;

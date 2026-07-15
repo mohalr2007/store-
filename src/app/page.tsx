@@ -6,9 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { formatCurrency, getProductImage } from "@/lib/utils";
 import { listPublicProductsAction } from "@/app/actions/storefront";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-export const revalidate = 0;
+export const revalidate = 60; // Revalider toutes les 60 secondes pour économiser Vercel
 
 export default async function HomePage() {
   const result = await listPublicProductsAction(8);
