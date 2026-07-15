@@ -97,8 +97,8 @@ export function DirectOrderForm({
       const res = await getStoreShippingRatesAction();
       if (res.success && res.rates) {
         setRates(res.rates);
-        if (res.rates.length > 0 && !res.rates.find((r) => r.province === form.province)) {
-          setForm((prev) => ({ ...prev, province: res.rates[0].province }));
+        if (res.rates.length > 0 && !res.rates.find((r: any) => r.province === form.province)) {
+          setForm((prev: any) => ({ ...prev, province: res.rates[0].province }));
         }
       }
       setRatesLoading(false);

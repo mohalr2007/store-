@@ -4,3 +4,5 @@ node_modules
 *.log
 $null
 tsconfig.tsbuildinfo
+
+/src/generated/prisma

@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customers {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String    @db.Uuid
+  full_name  String
+  phone      String
+  province   String?
+  city       String?
+  address    String?
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  orders     orders[]
+
+  @@unique([tenant_id, phone])
+}
+
+model order_financials {
+  id                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id               String    @db.Uuid
+  order_id                String    @db.Uuid
+  subtotal                Decimal?  @default(0) @db.Decimal
+  cod_amount              Decimal?  @default(0) @db.Decimal
+  discount_amount         Decimal?  @default(0) @db.Decimal
+  charged_shipping_amount Decimal?  @default(0) @db.Decimal
+  real_shipping_cost      Decimal?  @default(0) @db.Decimal
+  cogs_amount             Decimal?  @default(0) @db.Decimal
+  return_shipping_loss    Decimal?  @default(0) @db.Decimal
+  packaging_cost          Decimal?  @default(0) @db.Decimal
+  ad_spend_attributed     Decimal?  @default(0) @db.Decimal
+  created_at              DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime? @default(now()) @db.Timestamptz(6)
+  orders                  orders    @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([order_id], map: "idx_order_financials_order_id")
+}
+
+model order_items {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String    @db.Uuid
+  order_id   String    @db.Uuid
+  product_id String    @db.Uuid
+  quantity   Int?      @default(1)
+  unit_price Decimal?  @default(0) @db.Decimal
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  orders     orders    @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([order_id], map: "idx_order_items_order_id")
+}
+
+model orders {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id        String             @db.Uuid
+  order_number     String             @unique
+  customer_id      String             @db.Uuid
+  status           String?            @default("pending")
+  total_amount     Decimal?           @default(0) @db.Decimal
+  shipping_cost    Decimal?           @default(0) @db.Decimal
+  province         String?
+  city             String?
+  address          String?
+  delivery_mode    String?            @default("home")
+  customer_note    String?
+  created_by       String?            @db.Uuid
+  deleted_at       DateTime?          @db.Timestamptz(6)
+  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  order_financials order_financials[]
+  order_items      order_items[]
+  customers        customers          @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([customer_id], map: "idx_orders_customer_id")
+  @@index([tenant_id], map: "idx_orders_tenant_id")
+}
+
+model product_variants {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String    @db.Uuid
+  product_id  String    @db.Uuid
+  attribute   String
+  value       String
+  quantity    Int?      @default(0)
+  custom_name String?
+  sort_order  Int?      @default(0)
+  image_url   String?
+  deleted_at  DateTime? @db.Timestamptz(6)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+  products    products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([product_id], map: "idx_product_variants_product_id")
+}
+
+model products {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String             @db.Uuid
+  name                String
+  sku                 String?
+  description         String?
+  category            String?
+  image_url           String?
+  image_path          String?
+  video_url           String?
+  images              String[]
+  current_quantity    Int?               @default(0)
+  low_stock_threshold Int?               @default(0)
+  last_purchase_cost  Decimal?           @default(0) @db.Decimal
+  selling_price       Decimal?           @default(0) @db.Decimal
+  original_price      Decimal?           @db.Decimal
+  show_discount       Boolean?           @default(true)
+  is_active           Boolean?           @default(true)
+  is_free_shipping    Boolean?           @default(false)
+  deleted_at          DateTime?          @db.Timestamptz(6)
+  created_at          DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?          @default(now()) @db.Timestamptz(6)
+  order_items         order_items[]
+  product_variants    product_variants[]
+
+  @@index([tenant_id], map: "idx_products_tenant_id")
+}
+
+model store_shipping_rates {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String    @db.Uuid
+  province   String
+  home_price Decimal?  @default(0) @db.Decimal
+  desk_price Decimal?  @default(0) @db.Decimal
+  is_active  Boolean?  @default(true)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+}

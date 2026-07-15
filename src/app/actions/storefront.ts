@@ -1,7 +1,9 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/admin";
+import { PrismaClient } from "@prisma/client";
 import type { Product, ProductVariant } from "@/lib/types";
+
+const prisma = new PrismaClient();
 
 const DEFAULT_STORE_TENANT_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -32,28 +34,29 @@ function describeItem(item: OrderItemPayload) {
 
 export async function listPublicProductsAction(limit?: number) {
   try {
-    const supabase = createAdminClient();
-    let query = supabase
-      .from("products")
-      .select("*, product_variants(*)")
-      .eq("tenant_id", tenantId())
-      .eq("is_active", true)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false });
+    const products = await prisma.products.findMany({
+      where: {
+        tenant_id: tenantId(),
+        is_active: true,
+        deleted_at: null,
+      },
+      orderBy: { created_at: "desc" },
+      take: limit,
+      include: {
+        product_variants: {
+          where: { deleted_at: null },
+          orderBy: { sort_order: "asc" },
+        },
+      },
+    });
 
-    if (limit) query = query.limit(limit);
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    const products = (data || []).map((p: any) => ({
-      ...p,
-      variants: (p.product_variants || [])
-        .filter((v: any) => !v.deleted_at)
-        .sort((a: any, b: any) => a.sort_order - b.sort_order),
-    }));
-
-    return { success: true, products };
+    return {
+      success: true,
+      products: products.map((p: any) => ({
+        ...p,
+        variants: p.product_variants,
+      })),
+    };
   } catch (error: any) {
     return { success: false, products: [], error: error.message || "Impossible de charger les produits." };
   }
@@ -61,28 +64,30 @@ export async function listPublicProductsAction(limit?: number) {
 
 export async function getPublicProductAction(id: string) {
   try {
-    const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select("*, product_variants(*)")
-      .eq("tenant_id", tenantId())
-      .eq("is_active", true)
-      .is("deleted_at", null)
-      .eq("id", id)
-      .single();
+    const product = await prisma.products.findFirst({
+      where: {
+        id,
+        tenant_id: tenantId(),
+        is_active: true,
+        deleted_at: null,
+      },
+      include: {
+        product_variants: {
+          where: { deleted_at: null },
+          orderBy: { sort_order: "asc" },
+        },
+      },
+    });
 
-    if (error) throw error;
-    
-    const variants = (data.product_variants || [])
-      .filter((v: any) => !v.deleted_at)
-      .sort((a: any, b: any) => a.sort_order - b.sort_order);
+    if (!product) throw new Error("Produit introuvable.");
 
-    const productWithVariants = {
-      ...data,
-      variants,
+    return {
+      success: true,
+      product: {
+        ...product,
+        variants: product.product_variants,
+      },
     };
-
-    return { success: true, product: productWithVariants };
   } catch (error: any) {
     return { success: false, product: null, error: error.message || "Produit introuvable." };
   }
@@ -90,20 +95,21 @@ export async function getPublicProductAction(id: string) {
 
 export async function getStoreShippingRatesAction() {
   try {
-    const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("store_shipping_rates")
-      .select("province, home_price, desk_price, is_active")
-      .eq("tenant_id", tenantId())
-      .eq("is_active", true)
-      .order("province");
+    const rates = await prisma.store_shipping_rates.findMany({
+      where: {
+        tenant_id: tenantId(),
+        is_active: true,
+      },
+      select: {
+        province: true,
+        home_price: true,
+        desk_price: true,
+        is_active: true,
+      },
+      orderBy: { province: "asc" },
+    });
 
-    if (error) {
-      console.error("Supabase Error getting shipping rates:", error);
-      return { success: false, rates: [], error: error.message };
-    }
-
-    return { success: true, rates: data || [] };
+    return { success: true, rates };
   } catch (error: any) {
     return { success: false, rates: [], error: error.message || "Impossible de charger les tarifs." };
   }
@@ -118,163 +124,128 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
       return { success: false, error: "السلة فارغة." };
     }
 
-    const supabase = createAdminClient();
     const activeTenantId = tenantId();
 
-    // Verify stock on the server, including the selected variant when present.
+    // Verify stock
     for (const item of items) {
-      const { data: dbProduct, error: prodError } = await supabase
-        .from("products")
-        .select("current_quantity, name")
-        .eq("id", item.product.id)
-        .eq("tenant_id", activeTenantId)
-        .single();
-      
-      if (prodError || !dbProduct) {
-        return { success: false, error: `المنتج غير موجود: ${item.product.name}` };
-      }
+      const dbProduct = await prisma.products.findFirst({
+        where: { id: item.product.id, tenant_id: activeTenantId },
+        select: { current_quantity: true, name: true },
+      });
+      if (!dbProduct) return { success: false, error: `المنتج غير موجود: ${item.product.name}` };
 
       if (item.variant?.id) {
-        const { data: dbVariant, error: variantError } = await supabase
-          .from("product_variants")
-          .select("id, product_id, quantity, value, attribute")
-          .eq("id", item.variant.id)
-          .eq("tenant_id", activeTenantId)
-          .eq("product_id", item.product.id)
-          .is("deleted_at", null)
-          .single();
-
-        if (variantError || !dbVariant) {
-          return { success: false, error: `النسخة غير موجودة للمنتج ${dbProduct.name}.` };
-        }
-
-        // Removed stock limit check for variants so customers can order any quantity.
-        continue;
+        const dbVariant = await prisma.product_variants.findFirst({
+          where: { id: item.variant.id, tenant_id: activeTenantId, product_id: item.product.id, deleted_at: null },
+          select: { id: true, quantity: true, value: true, attribute: true },
+        });
+        if (!dbVariant) return { success: false, error: `النسخة غير موجودة للمنتج ${dbProduct.name}.` };
       }
-      
-      // Removed stock limit check for products so customers can order any quantity.
     }
 
-    const total = items.reduce(
-      (sum, item) => sum + Number(item.product.selling_price || 0) * Number(item.quantity || 1),
-      0
-    );
+    const total = items.reduce((sum, item) => sum + Number(item.product.selling_price || 0) * Number(item.quantity || 1), 0);
     const payableTotal = total + Number(shippingCost || 0);
     const itemSummary = items.map(describeItem).join(", ");
-    const orderNotes = [customer.notes?.trim(), itemSummary ? `Articles: ${itemSummary}` : ""]
-      .filter(Boolean)
-      .join("\n");
+    const orderNotes = [customer.notes?.trim(), itemSummary ? `Articles: ${itemSummary}` : ""].filter(Boolean).join("\n");
 
-    const { data: createdCustomer, error: customerError } = await supabase
-      .from("customers")
-      .upsert(
-        {
+    const orderNumber = `STORE-${Date.now()}`;
+
+    // Transaction to ensure atomicity
+    const orderResult = await prisma.$transaction(async (tx: any) => {
+      let createdCustomer = await tx.customers.findFirst({
+        where: { tenant_id: activeTenantId, phone: customer.phone.trim() }
+      });
+
+      if (createdCustomer) {
+        createdCustomer = await tx.customers.update({
+          where: { id: createdCustomer.id },
+          data: {
+            full_name: customer.fullName.trim(),
+            province: customer.province,
+            city: customer.city?.trim() || null,
+            address: customer.address.trim(),
+          }
+        });
+      } else {
+        createdCustomer = await tx.customers.create({
+          data: {
+            tenant_id: activeTenantId,
+            full_name: customer.fullName.trim(),
+            phone: customer.phone.trim(),
+            province: customer.province,
+            city: customer.city?.trim() || null,
+            address: customer.address.trim(),
+          }
+        });
+      }
+
+      const order = await tx.orders.create({
+        data: {
           tenant_id: activeTenantId,
-          full_name: customer.fullName.trim(),
-          phone: customer.phone.trim(),
+          order_number: orderNumber,
+          customer_id: createdCustomer.id,
+          status: "pending",
+          total_amount: payableTotal,
+          shipping_cost: shippingCost,
           province: customer.province,
           city: customer.city?.trim() || null,
           address: customer.address.trim(),
-        },
-        { onConflict: "tenant_id,phone" }
-      )
-      .select("id")
-      .single();
+          delivery_mode: customer.delivery_mode || "home",
+          customer_note: orderNotes || null,
+        }
+      });
 
-    if (customerError) throw customerError;
+      const orderItemsData = items.map((item) => ({
+        tenant_id: activeTenantId,
+        order_id: order.id,
+        product_id: item.product.id,
+        quantity: Math.max(1, Number(item.quantity || 1)),
+        unit_price: Number(item.product.selling_price || 0),
+      }));
 
-    const orderNumber = `STORE-${Date.now()}`;
-    const orderPayload = {
-      tenant_id: activeTenantId,
-      order_number: orderNumber,
-      customer_id: createdCustomer!.id,
-      status: "pending",
-      total_amount: payableTotal,
-      province: customer.province,
-      city: customer.city?.trim() || null,
-      address: customer.address.trim(),
-      delivery_mode: customer.delivery_mode || "home",
-      created_by: null,
-    };
+      await tx.order_items.createMany({ data: orderItemsData });
 
-    let { data: order, error: orderError } = await insertOrderWithFallback(supabase, {
-      ...orderPayload,
-      shipping_cost: shippingCost,
-      customer_note: orderNotes || null,
-    });
+      for (const item of items) {
+        if (item.variant?.id) {
+          const dbVariant = await tx.product_variants.findUnique({
+            where: { id: item.variant.id }
+          });
+          if (dbVariant) {
+            const nextVariantQty = Math.max(0, Number(dbVariant.quantity || 0) - Number(item.quantity || 1));
+            await tx.product_variants.update({
+              where: { id: item.variant.id },
+              data: { quantity: nextVariantQty }
+            });
+          }
+        }
 
-    if (orderError) throw orderError;
-
-    const orderItems = items.map((item) => ({
-      tenant_id: activeTenantId,
-      order_id: order!.id,
-      product_id: item.product.id,
-      quantity: Math.max(1, Number(item.quantity || 1)),
-      unit_price: Number(item.product.selling_price || 0),
-    }));
-
-    const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
-    if (itemsError) throw itemsError;
-
-    for (const item of items) {
-      if (item.variant?.id) {
-        const { data: dbVariant, error: variantFetchError } = await supabase
-          .from("product_variants")
-          .select("quantity")
-          .eq("id", item.variant.id)
-          .eq("tenant_id", activeTenantId)
-          .eq("product_id", item.product.id)
-          .single();
-
-        if (variantFetchError || !dbVariant) throw variantFetchError;
-
-        const currentVariantQty = Number(dbVariant.quantity || 0);
-        const nextVariantQty = Math.max(0, currentVariantQty - Number(item.quantity || 1));
-
-        const { error: variantUpdateError } = await supabase
-          .from("product_variants")
-          .update({ quantity: nextVariantQty })
-          .eq("id", item.variant.id)
-          .eq("tenant_id", activeTenantId)
-          .eq("product_id", item.product.id);
-
-        if (variantUpdateError) throw variantUpdateError;
-        continue;
+        const dbProduct = await tx.products.findUnique({ where: { id: item.product.id } });
+        if (dbProduct) {
+          const newQty = Math.max(0, Number(dbProduct.current_quantity || 0) - Number(item.quantity || 1));
+          await tx.products.update({
+            where: { id: item.product.id },
+            data: { current_quantity: newQty }
+          });
+        }
       }
 
-      // Re-fetch since we need the exact quantity just in case it changed in the last millisecond.
-      const { data: dbProduct } = await supabase
-        .from("products")
-        .select("current_quantity")
-        .eq("id", item.product.id)
-        .eq("tenant_id", activeTenantId)
-        .single();
+      await tx.order_financials.create({
+        data: {
+          order_id: order.id,
+          tenant_id: activeTenantId,
+          subtotal: total,
+          cod_amount: total,
+          discount_amount: 0,
+          charged_shipping_amount: 0,
+          real_shipping_cost: 0,
+          cogs_amount: items.reduce((sum, item) => sum + Number((item.product as any).last_purchase_cost || 0) * Number(item.quantity || 1), 0),
+          return_shipping_loss: 0,
+          packaging_cost: 0,
+          ad_spend_attributed: 0,
+        }
+      });
 
-      const currentDbQty = dbProduct?.current_quantity || 0;
-      const newQty = Math.max(0, currentDbQty - Number(item.quantity || 1));
-      
-      await supabase
-        .from("products")
-        .update({ current_quantity: newQty })
-        .eq("id", item.product.id)
-        .eq("tenant_id", activeTenantId); // Always scope to tenant
-    }
-
-    await supabase.from("order_financials").insert({
-      order_id: order!.id,
-      tenant_id: activeTenantId,
-      subtotal: total,
-      cod_amount: total,
-      discount_amount: 0,
-      charged_shipping_amount: 0,
-      real_shipping_cost: 0,
-      cogs_amount: items.reduce(
-        (sum, item) => sum + Number((item.product as any).last_purchase_cost || 0) * Number(item.quantity || 1),
-        0
-      ),
-      return_shipping_loss: 0,
-      packaging_cost: 0,
-      ad_spend_attributed: 0,
+      return order;
     });
 
     try {
@@ -287,7 +258,7 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
         city: customer.city || "",
         address: customer.address,
         product: items.map(describeItem).join(", "),
-        amount: total, // Montant produit uniquement
+        amount: total,
         shippingCost: shippingCost,
         totalAmount: payableTotal,
         status: "pending",
@@ -302,26 +273,4 @@ export async function submitStoreOrderAction(customer: CustomerPayload, items: O
   } catch (error: any) {
     return { success: false, error: error.message || "تعذر تأكيد الطلب." };
   }
-}
-
-async function insertOrderWithFallback(supabase: ReturnType<typeof createAdminClient>, payload: Record<string, any>) {
-  const mutablePayload = { ...payload };
-  let lastError: any = null;
-  const removableColumns = ["customer_note", "shipping_cost", "delivery_mode", "total_amount"];
-
-  for (let attempt = 0; attempt < removableColumns.length + 1; attempt++) {
-    const result = await supabase.from("orders").insert(mutablePayload).select("id").single();
-    if (!result.error) return result;
-
-    lastError = result.error;
-    const message = String(result.error.message || "");
-    const missingColumn = removableColumns.find((column) => {
-      return column in mutablePayload && new RegExp(`\\b${column}\\b`, "i").test(message);
-    });
-
-    if (!missingColumn) break;
-    delete mutablePayload[missingColumn];
-  }
-
-  return { data: null, error: lastError };
 }
