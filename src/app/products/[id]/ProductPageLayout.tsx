@@ -198,9 +198,11 @@ export function ProductPageLayout({ product }: { product: Product }) {
           </div>
 
           {product.description && (
-            <p className="mt-5 text-sm leading-7" style={{ color: "var(--fg-muted)" }}>
-              {product.description}
-            </p>
+            <div 
+              className="mt-5 text-sm leading-relaxed store-html-content" 
+              style={{ color: "var(--fg-muted)" }}
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           )}
 
           <div className="mt-7">

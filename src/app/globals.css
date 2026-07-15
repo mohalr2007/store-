@@ -465,3 +465,43 @@ html::after {
 .animate-slide-in   { animation: slide-in-right 0.3s ease forwards; }
 .animate-glow-pulse { animation: glow-pulse 2.5s ease-in-out infinite; }
 .animate-neon       { animation: neon-flicker 4s ease-in-out infinite; }
+
+/* === STORE HTML CONTENT (Rich Text) === */
+.store-html-content {
+  color: var(--fg-muted);
+}
+.store-html-content h1,
+.store-html-content h2,
+.store-html-content h3 {
+  color: var(--fg);
+  font-weight: 800;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.store-html-content p {
+  margin-bottom: 1em;
+}
+.store-html-content ul {
+  list-style-type: disc;
+  padding-right: 1.5rem;
+  margin-bottom: 1em;
+}
+.store-html-content ol {
+  list-style-type: decimal;
+  padding-right: 1.5rem;
+  margin-bottom: 1em;
+}
+.store-html-content li {
+  margin-bottom: 0.5em;
+}
+.store-html-content strong {
+  color: var(--fg);
+  font-weight: 800;
+}
+.store-html-content blockquote {
+  border-right: 4px solid var(--brand);
+  padding-right: 1rem;
+  margin-right: 0;
+  color: var(--fg-subtle);
+  font-style: italic;
+}
