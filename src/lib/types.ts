@@ -13,6 +13,7 @@ export interface Product {
   low_stock_threshold: number;
   selling_price: number;
   original_price?: number | null;
+  show_discount: boolean;
   is_active: boolean;
   is_free_shipping?: boolean;
   created_at: string;

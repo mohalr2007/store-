@@ -128,9 +128,11 @@ export function ProductCard({ product }: { product: Product }) {
               <span className="text-[11px] font-bold text-[var(--fg-muted)] line-through">
                 {formatCurrency(product.original_price)}
               </span>
-              <span className="rounded bg-[rgba(244,63,94,0.15)] px-1.5 py-0.5 text-[10px] font-black text-[var(--neon-red)] border border-[rgba(244,63,94,0.3)]">
-                -{Math.round(((product.original_price - product.selling_price) / product.original_price) * 100)}%
-              </span>
+              {product.show_discount && (
+                <span className="rounded bg-[rgba(244,63,94,0.15)] px-1.5 py-0.5 text-[10px] font-black text-[var(--neon-red)] border border-[rgba(244,63,94,0.3)]">
+                  -{Math.round(((product.original_price - product.selling_price) / product.original_price) * 100)}%
+                </span>
+              )}
             </div>
           )}
           <div className="flex items-end justify-between gap-2">

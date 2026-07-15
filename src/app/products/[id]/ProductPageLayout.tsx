@@ -167,9 +167,11 @@ export function ProductPageLayout({ product }: { product: Product }) {
                 <span className="text-lg font-bold text-[var(--fg-muted)] line-through">
                   {formatCurrency(product.original_price)}
                 </span>
-                <span className="rounded-lg bg-[rgba(244,63,94,0.15)] px-2.5 py-1 text-sm font-black text-[var(--neon-red)] border border-[rgba(244,63,94,0.3)]">
-                  تخفيض -{Math.round(((product.original_price - product.selling_price) / product.original_price) * 100)}%
-                </span>
+                {product.show_discount && (
+                  <span className="rounded-lg bg-[rgba(244,63,94,0.15)] px-2.5 py-1 text-sm font-black text-[var(--neon-red)] border border-[rgba(244,63,94,0.3)]">
+                    تخفيض -{Math.round(((product.original_price - product.selling_price) / product.original_price) * 100)}%
+                  </span>
+                )}
               </div>
             )}
             <div className="flex flex-wrap items-center gap-4">
