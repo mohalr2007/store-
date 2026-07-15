@@ -195,6 +195,10 @@ export function ProductPageLayout({ product }: { product: Product }) {
             )}
           </div>
 
+          <div className="mt-6">
+            {variantSelectorBlock}
+          </div>
+
           {product.description && (
             <p className="mt-5 text-sm leading-7" style={{ color: "var(--fg-muted)" }}>
               {product.description}
