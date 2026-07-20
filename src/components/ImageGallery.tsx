@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Package, ZoomIn, X, Play } from "lucide-react";
@@ -8,11 +8,15 @@ import type { Product } from "@/lib/types";
 
 import { useEffect } from "react";
 export function ImageGallery({ product, activeImageUrl, colorSelected }: { product: Product; activeImageUrl?: string | null; colorSelected?: boolean }) {
-  const images = product.images?.length
-    ? product.images
-    : getProductImage(product)
-    ? [getProductImage(product)!]
-    : [];
+  const images = Array.from(new Set([
+    product.image_url || product.image_path,
+    ...(product.images || [])
+  ])).filter(Boolean) as string[];
+
+  if (images.length === 0) {
+    const fallback = getProductImage(product);
+    if (fallback) images.push(fallback);
+  }
   const hasVideo = !!product.video_url;
 
   const [activeIndex, setActiveIndex] = useState<number | "video">(hasVideo ? "video" : 0);

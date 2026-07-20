@@ -23,11 +23,11 @@ export function formatDate(date: string | Date): string {
 }
 
 export function getProductImage(product: Product): string | null {
-  if (product.images && product.images.length > 0) {
-    return product.images[0];
-  }
   if (product.image_url || product.image_path) {
     return product.image_url || product.image_path || null;
+  }
+  if (product.images && product.images.length > 0) {
+    return product.images[0];
   }
   // Deterministic fallback based on product ID length or characters
   const charCode = (product.id || "").charCodeAt(0) || 0;
